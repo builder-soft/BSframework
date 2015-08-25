@@ -1,8 +1,10 @@
 package cl.buildersoft.framework.services.impl;
 
-import java.sql.Connection;
+import static cl.buildersoft.framework.util.BSUtils.array2List;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,6 @@ import cl.buildersoft.framework.database.BSBeanUtils;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.services.BSUserService;
 import cl.buildersoft.framework.util.BSDataUtils;
-import static cl.buildersoft.framework.util.BSUtils.array2List;
 
 public class BSUserServiceImpl extends BSDataUtils implements BSUserService {
 	public BSUserServiceImpl() {
@@ -54,8 +55,8 @@ public class BSUserServiceImpl extends BSDataUtils implements BSUserService {
 				bu.search(conn, rol);
 				out.add(rol);
 			}
-		} catch (Exception e) {
-			throw new BSDataBaseException("0300",e.getMessage());
+		} catch (SQLException e) {
+			throw new BSDataBaseException(e);
 		}
 		return out;
 	}

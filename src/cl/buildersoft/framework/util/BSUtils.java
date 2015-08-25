@@ -49,7 +49,7 @@ public class BSUtils {
 		Boolean out = true;
 		try {
 			Double.parseDouble(value);
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			out = false;
 		}
 		return out;

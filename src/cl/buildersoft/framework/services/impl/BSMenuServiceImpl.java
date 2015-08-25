@@ -1,7 +1,10 @@
 package cl.buildersoft.framework.services.impl;
 
+import static cl.buildersoft.framework.util.BSUtils.array2List;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +16,6 @@ import cl.buildersoft.framework.database.BSBeanUtils;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.services.BSMenuService;
 import cl.buildersoft.framework.util.BSDataUtils;
-import static cl.buildersoft.framework.util.BSUtils.array2List;
 
 public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 
@@ -137,8 +139,8 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 				submenu = new Submenu(option);
 				out.add(submenu);
 			}
-		} catch (Exception e) {
-			throw new BSDataBaseException("0300", e.getMessage());
+		} catch (SQLException e) {
+			throw new BSDataBaseException(e);
 		}
 		closeSQL(rs);
 

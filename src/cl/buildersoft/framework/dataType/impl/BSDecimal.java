@@ -1,20 +1,25 @@
-package cl.buildersoft.framework.dataType;
+package cl.buildersoft.framework.dataType.impl;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
 
+import cl.buildersoft.framework.dataType.BSDataType;
+import cl.buildersoft.framework.dataType.BSDataTypeAbstract;
+import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 
-public class BSDecimal extends Object implements BSDataType {
+public class BSDecimal extends BSDataTypeAbstract implements BSDataType {
+	private BigDecimal value = new BigDecimal(0);
 
 	@Override
 	public Boolean validData(Connection conn, String data) {
 		Boolean out = true;
 		try {
 			new BigDecimal(data);
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			out = false;
 		}
+
 		return out;
 	}
 
@@ -32,26 +37,14 @@ public class BSDecimal extends Object implements BSDataType {
 		BigDecimal out = null;
 		try {
 			out = new BigDecimal(data);
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			throw new BSProgrammerException(e);
 		}
 		return out;
 	}
 
 	@Override
-	@Deprecated
-	public Boolean validData(String data) {
-		return null;
-	}
-
-	@Override
-	@Deprecated
-	public Object convert(String data) {
-		return null;
-	}
-	
-	@Override
-	public String toString(){
-		return BSDataType.DECIMAL;
+	public BSDataTypeEnum getDataTypeEnum() {
+		return BSDataTypeEnum.DECIMAL;
 	}
 }

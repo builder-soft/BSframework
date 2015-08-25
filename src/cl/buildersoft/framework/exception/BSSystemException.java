@@ -11,12 +11,8 @@ public class BSSystemException extends BSException {
 		super(e);
 	}
 
-	public BSSystemException(String code) {
-		super(code);
-	}
-
-	public BSSystemException(String code, String message) {
-		super(code, message);
+	public BSSystemException(String message) {
+		super(message);
 	}
 
 }

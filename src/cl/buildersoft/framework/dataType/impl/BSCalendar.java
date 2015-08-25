@@ -1,24 +1,24 @@
-package cl.buildersoft.framework.type;
+package cl.buildersoft.framework.dataType.impl;
 
 import java.sql.Connection;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-//import java.util.Date;
 
+import cl.buildersoft.framework.dataType.BSDataType;
+import cl.buildersoft.framework.dataType.BSDataTypeAbstract;
+import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 import cl.buildersoft.framework.util.BSConfig;
-@Deprecated
-public class BSCalendar implements BSFieldDataType {
 
-	@Override
-	public Boolean validData(String data) {
-		throw new BSProgrammerException("", "Hay que llamar al metodo validData(Connection, String); para el tipo BSCalendar");
-	}
+//import java.util.Date;
 
-	@Override
-	public Object convert(String data) {
-		return null;
+public class BSCalendar extends BSDataTypeAbstract implements BSDataType {
+	private Calendar value = null;
+
+	public BSCalendar() {
+		value = Calendar.getInstance();
 	}
 
 	@Override
@@ -29,8 +29,8 @@ public class BSCalendar implements BSFieldDataType {
 		DateFormat formatter = new SimpleDateFormat(formatDate);
 		try {
 			out = formatter.format((Calendar) data);
-		} catch (Exception e) {
-			throw new BSProgrammerException("", "No se puede formatear el dato " + data);
+		} catch (IllegalArgumentException e) {
+			throw new BSProgrammerException("No se puede formatear el dato " + data);
 		}
 		return out;
 	}
@@ -40,28 +40,34 @@ public class BSCalendar implements BSFieldDataType {
 		BSConfig config = new BSConfig();
 		String formatDate = config.getString(conn, "FORMAT_DATETIME");
 		DateFormat formatter = new SimpleDateFormat(formatDate);
+		Boolean out = null;
 		try {
 			formatter.parse(data);
-			return true;
-		} catch (Exception e) {
-			return false;
+			out = true;
+		} catch (ParseException e) {
+			out = false;
 		}
+		return out;
 	}
 
 	@Override
 	public Object parse(Connection conn, String data) {
 		BSConfig config = new BSConfig();
 		String formatDate = config.getString(conn, "FORMAT_DATETIME");
-		Calendar out = null;
+		Calendar out = Calendar.getInstance();
 		DateFormat formatter = new SimpleDateFormat(formatDate);
 		try {
 			java.util.Date temp = formatter.parse(data);
 			out.setTime(temp);
 			temp = null;
-		} catch (Exception e) {
+		} catch (ParseException e) {
 			throw new BSProgrammerException(e);
 		}
 		return out;
 	}
 
+	@Override
+	public BSDataTypeEnum getDataTypeEnum() {
+		return BSDataTypeEnum.CALENDAR;
+	}
 }

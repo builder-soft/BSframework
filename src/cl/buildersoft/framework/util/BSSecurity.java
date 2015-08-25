@@ -1,10 +1,16 @@
 package cl.buildersoft.framework.util;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
@@ -35,7 +41,15 @@ public class BSSecurity {
 			mySecretKeyFactory = SecretKeyFactory.getInstance(myEncryptionScheme);
 			cipher = Cipher.getInstance(myEncryptionScheme);
 			key = mySecretKeyFactory.generateSecret(myKeySpec);
-		} catch (Exception e) {
+		} catch (IOException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvalidKeyException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchPaddingException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvalidKeySpecException e) {
 			throw new BSProgrammerException(e);
 		}
 	}
@@ -66,7 +80,13 @@ public class BSSecurity {
 			byte[] encryptedText = cipher.doFinal(plainText);
 			BASE64Encoder base64encoder = new BASE64Encoder();
 			encryptedString = base64encoder.encode(encryptedText);
-		} catch (Exception e) {
+		} catch (IOException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvalidKeyException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalBlockSizeException e) {
+			throw new BSProgrammerException(e);
+		} catch (BadPaddingException e) {
 			throw new BSProgrammerException(e);
 		}
 		return encryptedString;
@@ -80,7 +100,13 @@ public class BSSecurity {
 			byte[] encryptedText = base64decoder.decodeBuffer(encryptedString);
 			byte[] plainText = cipher.doFinal(encryptedText);
 			clearString = bytes2String(plainText);
-		} catch (Exception e) {
+		} catch (IOException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvalidKeyException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalBlockSizeException e) {
+			throw new BSProgrammerException(e);
+		} catch (BadPaddingException e) {
 			throw new BSProgrammerException(e);
 		}
 		return clearString;

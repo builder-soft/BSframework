@@ -1,4 +1,4 @@
-package cl.buildersoft.framework.beans;
+package cl.buildersoft.framework.util.crud;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -7,19 +7,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import cl.buildersoft.framework.dataType.BSDataTypeEnum;
+import cl.buildersoft.framework.dataType.BSDataTypeFactory;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
-import cl.buildersoft.framework.type.BSActionType;
-import cl.buildersoft.framework.type.BSFieldType;
-
-
 
 public class BSTableConfig {
 	private String database = null;
@@ -31,7 +26,7 @@ public class BSTableConfig {
 	private BSAction[] actions = null;
 	private String sortField = null;
 	private Map<String, String[]> fkInfo = null;
-	private Set<String> tablesCommon = null;
+	// private Set<String> tablesCommon = null;
 	private String pk = null;
 	private String key = null;
 	private String script = "";
@@ -146,7 +141,7 @@ public class BSTableConfig {
 		try {
 			metaData = resultSet.getMetaData();
 		} catch (SQLException e) {
-			throw new BSDataBaseException("300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
 
 		String name = null;
@@ -156,7 +151,7 @@ public class BSTableConfig {
 			try {
 				n = metaData.getColumnCount();
 			} catch (SQLException e) {
-				throw new BSDataBaseException("300", e.getMessage());
+				throw new BSDataBaseException(e);
 			}
 
 			BSField field = null;
@@ -166,7 +161,7 @@ public class BSTableConfig {
 				try {
 					name = metaData.getColumnName(i);
 				} catch (SQLException e) {
-					throw new BSDataBaseException("300", e.getMessage());
+					throw new BSDataBaseException(e);
 				}
 				field = new BSField(name, name.substring(1));
 				addField(field);
@@ -263,6 +258,8 @@ public class BSTableConfig {
 		}
 	}
 
+	/**
+	 * <code>
 	private String field2Table(Connection conn, String fieldName) {
 		String out = null;
 		String table = "t" + fieldName.substring(1);
@@ -283,7 +280,8 @@ public class BSTableConfig {
 
 		return out;
 	}
-
+</code>
+	 */
 	private String[] getFKTableInfo(Connection conn, BSField field) {
 		/**
 		 * <code>
@@ -318,7 +316,7 @@ public class BSTableConfig {
 				}
 
 			} catch (SQLException e) {
-				throw new BSDataBaseException("", e.getMessage());
+				throw new BSDataBaseException(e);
 			}
 		}
 
@@ -327,6 +325,8 @@ public class BSTableConfig {
 		return out;
 	}
 
+	/**
+	 * <code>
 	private Boolean isExistInCommon(Connection conn, String table) {
 		// Boolean out = Boolean.FALSE;
 		if (this.tablesCommon == null) {
@@ -369,7 +369,8 @@ public class BSTableConfig {
 		}
 		return databases;
 	}
-
+</code>
+	 */
 	protected void configField(Connection conn, ResultSetMetaData metaData, String name, Integer i, BSField field) {
 		try {
 			if (field.getType() == null) {
@@ -387,7 +388,7 @@ public class BSTableConfig {
 				field.setLength(metaData.getColumnDisplaySize(i));
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
 
 	}
@@ -408,25 +409,26 @@ public class BSTableConfig {
 			typeName = metaData.getColumnTypeName(i);
 			// System.out.println( metaData.getColumnClassName(i));
 		} catch (SQLException e) {
-			throw new BSDataBaseException("300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
+		BSDataTypeFactory dtf = new BSDataTypeFactory();
 
 		if (typeName.equals("BIGINT")) {
-			field.setType(BSFieldType.Long);
+			field.setType(dtf.create(BSDataTypeEnum.LONG));
 		} else if (typeName.equals("VARCHAR") || typeName.equals("CHAR")) {
-			field.setType(BSFieldType.String);
+			field.setType(dtf.create(BSDataTypeEnum.STRING));
 		} else if (typeName.equals("DATE")) {
-			field.setType(BSFieldType.Date);
+			field.setType(dtf.create(BSDataTypeEnum.DATE));
 		} else if (typeName.equals("TIMESTAMP")) {
-			field.setType(BSFieldType.Timestamp);
+			field.setType(dtf.create(BSDataTypeEnum.TIMESTAMP));
 		} else if (typeName.equals("DOUBLE")) {
-			field.setType(BSFieldType.Double);
+			field.setType(dtf.create(BSDataTypeEnum.DOUBLE));
 		} else if (typeName.equals("BIT")) {
-			field.setType(BSFieldType.Boolean);
+			field.setType(dtf.create(BSDataTypeEnum.BOOLEAN));
 		} else if (typeName.equals("INT")) {
-			field.setType(BSFieldType.Integer);
+			field.setType(dtf.create(BSDataTypeEnum.INTEGER));
 		} else {
-			throw new BSProgrammerException("0110", "No está catalogado el tipo " + typeName
+			throw new BSProgrammerException("No está catalogado el tipo " + typeName
 					+ ", verifique método BSTableConfig.setRealType()");
 		}
 	}
@@ -481,7 +483,7 @@ public class BSTableConfig {
 	public void renameAction(String source, String target) {
 		BSAction action = getAction(source);
 		if (action == null) {
-			throw new BSProgrammerException("0105", "Accion no encontrada, posibles: [" + unSplitActionCodes(",") + "]");
+			throw new BSProgrammerException("Accion no encontrada, posibles: [" + unSplitActionCodes(",") + "]");
 		}
 		action.setCode(target);
 	}
@@ -571,7 +573,7 @@ public class BSTableConfig {
 				}
 				rs.close();
 			} catch (SQLException e) {
-				throw new BSDataBaseException("", e.getMessage());
+				throw new BSDataBaseException(e);
 			}
 			this.key = fieldName;
 		}
@@ -592,7 +594,7 @@ public class BSTableConfig {
 				}
 				rs.close();
 			} catch (SQLException e) {
-				throw new BSDataBaseException("", e.getMessage());
+				throw new BSDataBaseException(e);
 			}
 			this.pk = fieldName;
 			out = getField(this.pk);
@@ -616,7 +618,7 @@ public class BSTableConfig {
 		BSField out = null;
 
 		if (fields.length == 0) {
-			throw new BSProgrammerException("", "No se ha definido BSFields[] para la tabla " + getTableName());
+			throw new BSProgrammerException("No se ha definido BSFields[] para la tabla " + getTableName());
 		} else {
 			for (BSField s : fields) {
 				if (s.isId()) {

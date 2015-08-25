@@ -1,6 +1,8 @@
 package cl.buildersoft.framework.beans;
 
-public class DomainAttribute extends BSBean {
+import java.io.Serializable;
+
+public class DomainAttribute extends BSBean implements Serializable{
 	private static final long serialVersionUID = -1348815045687895170L;
 	/**
 	 * <code>

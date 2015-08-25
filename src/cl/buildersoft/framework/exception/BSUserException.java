@@ -10,11 +10,7 @@ public class BSUserException extends BSException {
 		super(e);
 	}
 
-	public BSUserException(String code) {
-		super(code);
-	}
-
-	public BSUserException(String code, String message) {
-		super(code, message);
+	public BSUserException(String message) {
+		super(message);
 	}
 }

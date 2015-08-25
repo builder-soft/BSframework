@@ -5,11 +5,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,7 +25,8 @@ import org.apache.catalina.util.Base64;
 import cl.buildersoft.framework.beans.Option;
 import cl.buildersoft.framework.beans.Rol;
 import cl.buildersoft.framework.dataType.BSDataType;
-import cl.buildersoft.framework.dataType.BSDataTypeUtil;
+import cl.buildersoft.framework.dataType.BSDataTypeEnum;
+import cl.buildersoft.framework.dataType.BSDataTypeFactory;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
@@ -37,62 +42,73 @@ public class BSWeb {
 	public static Object value2Object(Connection conn, HttpServletRequest request, BSField field, boolean fromWebPage) {
 		Object out = null;
 		String name = field.getName();
-		String value = fromWebPage ? request.getParameter(name) : (String) field.getValue();
+		String value = null;
 
-		out = evaluateType(conn, value, field);
+		if (fromWebPage) {
+			value = request.getParameter(name);
+		} else {
+			value = (String) field.getValue();
+		}
+
+		if (field.getIsNullable() && value.trim().length() == 0 && field.getFKTable() != null) {
+			out = null;
+		} else {
+			out = evaluateType(conn, value, field);
+		}
 		return out;
 	}
 
 	private static Object evaluateType(Connection conn, String value, BSField field) {
-		BSDataType fieldDataType = BSDataTypeUtil.create(field.getType().toString());
-		Object out = fieldDataType.parse(conn, value);
+		Object out = field.getType().parse(conn, value == null ? "" : value);
+		// BSDataType fieldDataType = BSDataTypeFactory.create(field.getType());
+		// Object out = fieldDataType.parse(conn, value == null ? "" : value);
 
 		return out;
 	}
-/**<code>
-	private static Object evaluateType(Connection conn, HttpServletRequest request, Object out, String value, BSFieldType type,
+
+	private static Object evaluateType(Connection conn, HttpServletRequest request, Object out, String value, BSDataType type,
 			BSField field) {
 
-		if (type.equals(BSFieldType.String)) {
+		if (type.getDataTypeEnum().equals(BSDataTypeEnum.STRING)) {
 			out = value;
-		} else if (type.equals(BSFieldType.Boolean)) {
+		} else if (type.getDataTypeEnum().equals(BSDataTypeEnum.BOOLEAN)) {
 			out = Boolean.parseBoolean(value);
-		} else if (type.equals(BSFieldType.Date)) {
+		} else if (type.getDataTypeEnum().equals(BSDataTypeEnum.DATE)) {
 			String formatDate = BSDateTimeUtil.getFormatDate(request);
 			DateFormat formatter = new SimpleDateFormat(formatDate);
 
 			try {
 				out = (Date) formatter.parse(value);
 			} catch (ParseException e) {
-				throw new BSProgrammerException("0110", "No se pudo parsear el valor " + value + " como fecha");
+				throw new BSProgrammerException("No se pudo parsear el valor " + value + " como fecha");
 			}
 
-		} else if (type.equals(BSFieldType.Timestamp)) {
+		} else if (type.getDataTypeEnum().equals(BSDataTypeEnum.TIMESTAMP)) {
 			String formatDate = BSDateTimeUtil.getFormatDatetime(conn);
 			SimpleDateFormat dateFormat = new SimpleDateFormat(formatDate);
 			java.util.Date parsedDate;
 			try {
 				parsedDate = dateFormat.parse(value);
 			} catch (ParseException e) {
-				throw new BSProgrammerException("0110", "No se pudo parsear el valor " + value + " como fecha/hora");
+				throw new BSProgrammerException("No se pudo parsear el valor " + value + " como fecha/hora");
 			}
 			out = new java.sql.Timestamp(parsedDate.getTime());
-		} else if (type.equals(BSFieldType.Text)) {
+		} else if (type.getDataTypeEnum().equals(BSDataTypeEnum.TEXT)) {
 			throw new BSProgrammerException("0100");
 		} else {
 			value = value.replaceAll("[.]", "");
 			// value = value.replaceAll(",", "");
-			if (type.equals(BSFieldType.Double)) {
+			if (type.getDataTypeEnum().equals(BSDataTypeEnum.DOUBLE)) {
 				out = Double.parseDouble(value);
-			} else if (type.equals(BSFieldType.Integer)) {
+			} else if (type.getDataTypeEnum().equals(BSDataTypeEnum.INTEGER)) {
 				out = Integer.parseInt(value);
-			} else if (type.equals(BSFieldType.Long)) {
+			} else if (type.getDataTypeEnum().equals(BSDataTypeEnum.LONG)) {
 				out = Long.parseLong(value);
 			}
 		}
 		return out;
 	}
-</code>*/
+
 	/********************/
 
 	private static Connection requestToConnection(HttpServletRequest request) {
@@ -273,11 +289,11 @@ public class BSWeb {
 	 */
 
 	/********************/
-	public static Boolean canUse(String optionKey, HttpServletRequest request) {
+	public static Boolean canUse(String optionKey, HttpServletRequest request, Connection conn) {
 		Boolean out = Boolean.TRUE;
 
 		BSmySQL mysql = new BSmySQL();
-		Connection conn = mysql.getConnection(request);
+		// Connection conn = mysql.getConnection(request);
 
 		BSMenuService menuService = new BSMenuServiceImpl();
 		Option option = menuService.searchResourceByKey(conn, optionKey);
@@ -296,6 +312,8 @@ public class BSWeb {
 				}
 			}
 		}
+
+		// new BSmySQL().closeConnection(conn);
 		return out;
 	}
 

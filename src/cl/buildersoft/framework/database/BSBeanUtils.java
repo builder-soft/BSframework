@@ -1,6 +1,8 @@
 package cl.buildersoft.framework.database;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -121,7 +123,11 @@ public class BSBeanUtils extends BSDataUtils {
 				}
 				out.add(object);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
+			throw new BSDataBaseException(e);
+		} catch (InstantiationException e) {
+			throw new BSDataBaseException(e);
+		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
 		}
 		return out;
@@ -155,7 +161,11 @@ public class BSBeanUtils extends BSDataUtils {
 				}
 				out.add(object);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
+			throw new BSDataBaseException(e);
+		} catch (InstantiationException e) {
+			throw new BSDataBaseException(e);
+		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
 		}
 		return out;
@@ -199,7 +209,7 @@ public class BSBeanUtils extends BSDataUtils {
 				out = Boolean.TRUE;
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("0300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
 		return out;
 	}
@@ -242,7 +252,15 @@ public class BSBeanUtils extends BSDataUtils {
 		try {
 			method = c.getMethod("set" + fieldName, paramTypes);
 			method.invoke(bean, value);
-		} catch (Exception e) {
+		} catch (SecurityException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchMethodException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalArgumentException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalAccessException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvocationTargetException e) {
 			throw new BSProgrammerException(e);
 		}
 
@@ -278,7 +296,7 @@ public class BSBeanUtils extends BSDataUtils {
 		} else if (typeString.indexOf("Date") > -1) {
 			out = Date.class;
 		} else {
-			throw new BSProgrammerException("0110", "El tipo de dato '" + type + "' que retorna el m�todo '" + methodName
+			throw new BSProgrammerException("El tipo de dato '" + type + "' que retorna el metodo '" + methodName
 					+ "()', no fue encontrado");
 		}
 
@@ -352,9 +370,15 @@ public class BSBeanUtils extends BSDataUtils {
 				method = c.getMethod(name, null);
 				out[i++] = method.invoke(bean, null);
 			} catch (SecurityException e) {
-				throw new BSSystemException("0210", e.getMessage());
-			} catch (Exception e) {
-				throw new BSProgrammerException("0110", e.getMessage());
+				throw new BSSystemException(e);
+			} catch (NoSuchMethodException e) {
+				throw new BSProgrammerException(e);
+			} catch (IllegalArgumentException e) {
+				throw new BSProgrammerException(e);
+			} catch (IllegalAccessException e) {
+				throw new BSProgrammerException(e);
+			} catch (InvocationTargetException e) {
+				throw new BSProgrammerException(e);
 			}
 
 		}
@@ -389,8 +413,16 @@ public class BSBeanUtils extends BSDataUtils {
 		try {
 			method = c.getMethod(methodName, null);
 			value = method.invoke(bean, null);
-		} catch (Exception e) {
-			throw new BSProgrammerException("0110", e.getMessage());
+		} catch (SecurityException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchMethodException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalArgumentException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalAccessException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvocationTargetException e) {
+			throw new BSProgrammerException(e);
 		}
 
 		return value;
@@ -509,13 +541,15 @@ public class BSBeanUtils extends BSDataUtils {
 		Method m;
 		try {
 			m = clazz.getDeclaredMethod(name);
-		} catch (Exception e) {
-			throw new BSProgrammerException("0110", e.getMessage());
+		} catch (SecurityException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchMethodException e) {
+			throw new BSProgrammerException(e);
 		}
 
 		if (m == null) {
 			if (clazz.equals(Object.class)) {
-				throw new BSProgrammerException("0110", "Method not found in any super class.");
+				throw new BSProgrammerException("Method not found in any super class.");
 			}
 			return getMethod(clazz.getSuperclass(), name);
 		}
@@ -529,8 +563,14 @@ public class BSBeanUtils extends BSDataUtils {
 			privateStringField = c.getDeclaredField("TABLE");
 			privateStringField.setAccessible(true);
 			out = (String) privateStringField.get(instance);
-		} catch (Exception e) {
-			throw new BSProgrammerException("0110", e.getMessage());
+		} catch (SecurityException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchFieldException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalArgumentException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalAccessException e) {
+			throw new BSProgrammerException(e);
 		}
 
 		return out;

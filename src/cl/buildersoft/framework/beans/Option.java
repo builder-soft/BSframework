@@ -1,6 +1,8 @@
 package cl.buildersoft.framework.beans;
 
-public class Option extends BSBean {
+import java.io.Serializable;
+
+public class Option extends BSBean implements Serializable{
 	private static final long serialVersionUID = -1126831609688823765L;
 	@SuppressWarnings("unused")
 	private String TABLE = "tOption";

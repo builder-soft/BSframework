@@ -1,18 +1,17 @@
-package cl.buildersoft.framework.beans;
+package cl.buildersoft.framework.util.crud;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import cl.buildersoft.framework.dataType.BSDataTypeUtil;
+import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.util.BSConfig;
-import cl.buildersoft.framework.util.crud.BSField;
-import cl.buildersoft.framework.util.crud.BSTableConfig_deprecated;
 
-public class BSPaging_deprecated {
+public class BSPaging {
 	private Boolean requiresPaging = null;
 	private Integer recordPerPage = null;
 	private Integer recordCount = null;
@@ -23,7 +22,7 @@ public class BSPaging_deprecated {
 
 	// private Integer lastRecord = null;
 
-	public BSPaging_deprecated(Connection conn, BSmySQL mysql, BSTableConfig_deprecated table, HttpServletRequest request) {
+	public BSPaging(Connection conn, BSmySQL mysql, BSTableConfig table, HttpServletRequest request) {
 		// ServletContext context = request.getServletContext();
 		this.search = getSearchValue(request);
 		this.currentPage = getCurrentPage(request);
@@ -60,37 +59,36 @@ public class BSPaging_deprecated {
 		Integer currentPageInteger;
 		try {
 			currentPageInteger = Integer.parseInt(currentPageString);
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			currentPageInteger = new Integer(1);
 		}
 		return currentPageInteger;
 	}
 
-	private Integer recordCount(Connection conn, BSmySQL mysql, BSTableConfig_deprecated table) {
-		String sql = getSQLCount(conn, table);
+	private Integer recordCount(Connection conn, BSmySQL mysql, BSTableConfig table) {
+		String sql = getSQLCount(table);
 		Integer out = Integer.parseInt(mysql.queryField(conn, sql, getParams()));
 		mysql.closeSQL();
 		return out;
 	}
 
-	private String getSQLCount(Connection conn, BSTableConfig_deprecated table) {
+	private String getSQLCount(BSTableConfig table) {
 		BSField[] fields = table.getFields();
 
-		String firstFieldName = "1";
+		String fieldName = "1";
 		if (fields.length > 0) {
-			BSField firstField = table.getFields()[0];
-			// BSField idField = table.getIdField();
-			firstFieldName = firstField.getName();
+			BSField idField = table.getIdField();
+			fieldName = idField.getName();
 		}
 
-		String out = "SELECT COUNT(" + firstFieldName + ") AS cCount ";
+		String out = "SELECT COUNT(" + fieldName + ") AS cCount ";
 		out += "FROM " + table.getDatabase() + "." + table.getTableOrViewName();
 		out += getWhere(table);
 
 		return out;
 	}
 
-	public String getSQL(BSTableConfig_deprecated table) {
+	public String getSQL(BSTableConfig table) {
 		String sql = "SELECT " + unSplit(table, ",", false);
 		sql += " FROM " + table.getDatabase() + "." + table.getTableOrViewName();
 		sql += getWhere(table);
@@ -99,31 +97,64 @@ public class BSPaging_deprecated {
 		return sql;
 	}
 
-	private String getOrder(BSTableConfig_deprecated table) {
+	private String getOrder(BSTableConfig table) {
 		return table.getSortField() != null ? " ORDER BY " + table.getSortField() : "";
 	}
 
-	private String getWhere(BSTableConfig_deprecated table) {
+	private String getWhere(BSTableConfig table) {
 		String out = "";
 		if (!this.search.equals("")) {
 			BSField[] fields = table.getFields();
 			if (fields.length > 0) {
-				out = " WHERE CONCAT(" + unSplit(table, ",", true) + ") LIKE ?";
+				out = " WHERE CONCAT(" + unSplit(table, ",", true, true) + ") LIKE ?";
 			}
 		}
 		return out;
 	}
 
-	protected String unSplit(BSTableConfig_deprecated table, String s, Boolean excludeBoolean) {
+	protected String unSplit(BSTableConfig table, String separeitor, Boolean excludeBoolean) {
+		return unSplit(table, separeitor, excludeBoolean, false);
+		/**
+		 * <code>
 		String out = "";
-		for (BSField field : table.getFields()) {
+		Boolean useField = null;
+		for (BSField f : table.getFields()) {
 			if (excludeBoolean) {
-				// if (!field.getType().equals(BSFieldType.Boolean)) {
-				if (!BSDataTypeUtil.isBoolean(field.getType())) {
-					out += field.getName() + s;
+				useField = !f.getType().equals(BSFieldType.Boolean) && !f.getType().equals(BSFieldType.Text);
+				if (useField) {
+					out += "IFNULL(" + f.getName() + ",'')" + separeitor;
+					// out += f.getName() + separeitor;
 				}
 			} else {
-				out += field.getName() + s;
+				out += "IFNULL(" + f.getName() + ",'')" + separeitor;
+				// out += f.getName() + separeitor;
+			}
+		}
+		out = out.substring(0, out.length() - 1);
+		return out;
+		</code>
+		 */
+	}
+
+	protected String unSplit(BSTableConfig table, String separeitor, Boolean excludeBoolean, Boolean validateNull) {
+		String out = "";
+		Boolean useField = null;
+		for (BSField f : table.getFields()) {
+			if (excludeBoolean) {
+				useField = !f.getType().equals(BSDataTypeEnum.BOOLEAN) && !f.getType().equals(BSDataTypeEnum.TEXT);
+				if (useField) {
+					if (validateNull) {
+						out += "IFNULL(" + f.getName() + ",'')" + separeitor;
+					} else {
+						out += f.getName() + separeitor;
+					}
+				}
+			} else {
+				if (validateNull) {
+					out += "IFNULL(" + f.getName() + ",'')" + separeitor;
+				} else {
+					out += f.getName() + separeitor;
+				}
 			}
 		}
 		out = out.substring(0, out.length() - 1);
@@ -134,17 +165,17 @@ public class BSPaging_deprecated {
 		return this.recordCount > this.recordPerPage;
 	}
 
-	/**
-	 * <code>
-	 * 
-	 * @Deprecated private Integer getRecordsPerPage(ServletContext context) {
-	 *             String recordPerPageString =
-	 *             context.getInitParameter("bsframework.recordPerPage");
-	 *             Integer recordPerPageInteger; try { recordPerPageInteger =
-	 *             Integer.parseInt(recordPerPageString); } catch (Exception e)
-	 *             { recordPerPageInteger = new Integer(20); } return
-	 *             recordPerPageInteger; } </code>
-	 */
+	@Deprecated
+	private Integer getRecordsPerPage(ServletContext context) {
+		String recordPerPageString = context.getInitParameter("bsframework.recordPerPage");
+		Integer recordPerPageInteger;
+		try {
+			recordPerPageInteger = Integer.parseInt(recordPerPageString);
+		} catch (NumberFormatException e) {
+			recordPerPageInteger = new Integer(20);
+		}
+		return recordPerPageInteger;
+	}
 
 	private Integer getRecordsPerPage(Connection conn) {
 		BSConfig config = new BSConfig();

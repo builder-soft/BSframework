@@ -11,12 +11,8 @@ public class BSProgrammerException extends BSException {
 		super(e);
 	}
 
-	public BSProgrammerException(String code) {
-		super(code);
-	}
-
-	public BSProgrammerException(String code, String message) {
-		super(code, message);
+	public BSProgrammerException(String message) {
+		super(message);
 	}
 
 }

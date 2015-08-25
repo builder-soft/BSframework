@@ -36,7 +36,12 @@ public class BSDateTimeUtil {
 		date.setTime(calendar.getTimeInMillis());
 		return date;
 	}
-
+	/**<code>
+	public static java.sql.Date calendar2SQLDate(Calendar calendar) {
+		java.sql.Date date = new java.sql.Date(calendar.getTimeInMillis());
+		return date;
+	}
+</code>*/
 	public static Timestamp calendar2Timestamp(Calendar calendar) {
 		return new Timestamp(calendar.getTimeInMillis());
 	}
@@ -74,7 +79,7 @@ public class BSDateTimeUtil {
 			out = Boolean.FALSE;
 		}
 
-		if (out && !sdf.format(testDate).equals(date)) {
+		if (!sdf.format(testDate).equals(date)) {
 			out = Boolean.FALSE;
 		}
 

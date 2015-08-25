@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -31,7 +32,7 @@ public class BSDataUtils {
 		if (rs != null) {
 			try {
 				rs.close();
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				throw new BSDataBaseException(e);
 			}
 		}
@@ -41,7 +42,7 @@ public class BSDataUtils {
 		if (this.preparedStatement != null) {
 			try {
 				this.preparedStatement.close();
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				throw new BSDataBaseException(e);
 			}
 		}
@@ -60,7 +61,7 @@ public class BSDataUtils {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameter, preparedStatement);
 			rowsAffected = preparedStatement.executeUpdate();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 
@@ -82,7 +83,7 @@ public class BSDataUtils {
 
 			closeSQL(rs);
 			// rs.close();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 
@@ -103,7 +104,7 @@ public class BSDataUtils {
 				out = rs.getString(1);
 			}
 			rs.close();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 		return out;
@@ -123,7 +124,7 @@ public class BSDataUtils {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameters, preparedStatement);
 			out = preparedStatement.executeQuery();
-		} catch (Exception e) {
+		} catch (SQLException  e) {
 			throw new BSDataBaseException(e);
 		}
 
@@ -171,13 +172,13 @@ public class BSDataUtils {
 						String message = "Object type not cataloged, please insert code in \"cl.buildersoft.framework.util.BSDataUtils\" for class \""
 								+ param.getClass().getName() + "\"";
 
-						throw new BSProgrammerException("0103", message);
+						throw new BSProgrammerException(message);
 					}
 
 					initIndex++;
 				}
 			}
-		} catch (Exception e) {
+		} catch (SQLException  e) {
 			throw new BSDataBaseException(e);
 		}
 	}
@@ -227,7 +228,9 @@ public class BSDataUtils {
 			Context envContext = (Context) initContext.lookup("java:/comp/env");
 			DataSource ds = (DataSource) envContext.lookup(dataSourceName);
 			conn = ds.getConnection();
-		} catch (Exception e) {
+		} catch (SQLException  e) {
+			throw new BSConfigurationException(e);
+		} catch (NamingException e) {
 			throw new BSConfigurationException(e);
 		}
 
@@ -276,7 +279,7 @@ public class BSDataUtils {
 			if (includeColumns) {
 				out.add(innerArray);
 			}
-		} catch (Exception e) {
+		} catch (SQLException  e) {
 			throw new BSDataBaseException(e);
 		}
 

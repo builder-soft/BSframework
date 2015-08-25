@@ -1,4 +1,4 @@
-package cl.buildersoft.framework.util;
+package cl.buildersoft.framework.database;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -7,14 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cl.buildersoft.framework.beans.BSBean;
-import cl.buildersoft.framework.database.BSBeanUtils;
-import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
-import cl.buildersoft.framework.exception.BSProgrammerException;
 
 public class BSBeanUtilsSP extends BSBeanUtils {
 	public List<? extends BSBean> list(Connection conn, BSBean bean, String spName) {
-		return list(conn, bean, spName, new ArrayList());
+		return list(conn, bean, spName, new ArrayList<Object>());
 	}
 
 	public List<? extends BSBean> list(Connection conn, BSBean bean, String spName, Object oneParam) {
@@ -43,9 +40,11 @@ public class BSBeanUtilsSP extends BSBeanUtils {
 				out.add((BSBean) object);
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("", e.getMessage());
-		} catch (Exception e) {
-			throw new BSProgrammerException("", e.getMessage());
+			throw new BSDataBaseException(e);
+		} catch (InstantiationException e) {
+			throw new BSDataBaseException(e);
+		} catch (IllegalAccessException e) {
+			throw new BSDataBaseException(e);
 		}
 
 		return out;
@@ -58,7 +57,6 @@ public class BSBeanUtilsSP extends BSBeanUtils {
 	}
 
 	public BSBean get(Connection conn, BSBean bean, String spName, List<Object> params) {
-
 		BSmySQL mysql = new BSmySQL();
 		ResultSet rs = mysql.callSingleSP(conn, spName, params);
 
@@ -72,9 +70,11 @@ public class BSBeanUtilsSP extends BSBeanUtils {
 				super.search(conn, out);
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("", e.getMessage());
-		} catch (Exception e) {
-			throw new BSProgrammerException("", e.getMessage());
+			throw new BSDataBaseException(e);
+		} catch (InstantiationException e) {
+			throw new BSDataBaseException(e);
+		} catch (IllegalAccessException e) {
+			throw new BSDataBaseException(e);
 		}
 
 		return out;

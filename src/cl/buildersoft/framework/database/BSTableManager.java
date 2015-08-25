@@ -1,6 +1,10 @@
 package cl.buildersoft.framework.database;
 
+import static cl.buildersoft.framework.util.BSUtils.array2List;
+
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -14,7 +18,6 @@ import java.util.List;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 import cl.buildersoft.framework.util.BSDataUtils;
-import static cl.buildersoft.framework.util.BSUtils.array2List;
 
 public abstract class BSTableManager extends BSDataUtils {
 	private Connection connection = null;
@@ -115,7 +118,7 @@ public abstract class BSTableManager extends BSDataUtils {
 				out = Boolean.TRUE;
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("0300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
 
 		return out;
@@ -144,8 +147,16 @@ public abstract class BSTableManager extends BSDataUtils {
 		try {
 			method = c.getMethod("set" + fieldName, paramTypes);
 			method.invoke(this, value);
-		} catch (Exception e) {
-			throw new BSProgrammerException("0110", e.getMessage());
+		} catch (SecurityException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchMethodException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalArgumentException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalAccessException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvocationTargetException e) {
+			throw new BSProgrammerException(e);
 		}
 
 	}
@@ -155,8 +166,10 @@ public abstract class BSTableManager extends BSDataUtils {
 		Method m;
 		try {
 			m = c.getMethod("get" + methodName, null);
-		} catch (Exception e) {
-			throw new BSProgrammerException("0110", e.getMessage());
+		} catch (SecurityException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchMethodException e) {
+			throw new BSProgrammerException(e);
 		}
 		Type type = m.getGenericReturnType();
 
@@ -177,7 +190,7 @@ public abstract class BSTableManager extends BSDataUtils {
 		} else if (type.toString().equals("java.util.Date")) {
 			out = Date.class;
 		} else {
-			throw new BSProgrammerException("0110", "El tipo de dato " + type.toString() + " no está soportado");
+			throw new BSProgrammerException("El tipo de dato " + type.toString() + " no está soportado");
 		}
 
 		return out;
@@ -243,8 +256,16 @@ public abstract class BSTableManager extends BSDataUtils {
 			try {
 				method = c.getMethod(name, null);
 				out[i++] = method.invoke(this, null);
-			} catch (Exception e) {
-				throw new BSProgrammerException("0110", e.getMessage());
+			} catch (SecurityException e) {
+				throw new BSProgrammerException(e);
+			} catch (NoSuchMethodException e) {
+				throw new BSProgrammerException(e);
+			} catch (IllegalArgumentException e) {
+				throw new BSProgrammerException(e);
+			} catch (IllegalAccessException e) {
+				throw new BSProgrammerException(e);
+			} catch (InvocationTargetException e) {
+				throw new BSProgrammerException(e);
 			}
 
 		}
@@ -280,8 +301,16 @@ public abstract class BSTableManager extends BSDataUtils {
 		try {
 			method = c.getMethod(methodName, null);
 			value = method.invoke(this, null);
-		} catch (Exception e) {
-			throw new BSProgrammerException("0110", e.getMessage());
+		} catch (SecurityException e) {
+			throw new BSProgrammerException(e);
+		} catch (NoSuchMethodException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalArgumentException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalAccessException e) {
+			throw new BSProgrammerException(e);
+		} catch (InvocationTargetException e) {
+			throw new BSProgrammerException(e);
 		}
 
 		return value;
@@ -362,8 +391,15 @@ public abstract class BSTableManager extends BSDataUtils {
 				privateStringField = c.getDeclaredField("TABLE");
 				privateStringField.setAccessible(true);
 				out = (String) privateStringField.get(this);
-			} catch (Exception e) {
-				throw new BSProgrammerException("0110", e.getMessage());
+
+			} catch (SecurityException e) {
+				throw new BSProgrammerException(e);
+			} catch (NoSuchFieldException e) {
+				throw new BSProgrammerException(e);
+			} catch (IllegalArgumentException e) {
+				throw new BSProgrammerException(e);
+			} catch (IllegalAccessException e) {
+				throw new BSProgrammerException(e);
 			}
 
 			this.tableName = out;

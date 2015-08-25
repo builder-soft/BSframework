@@ -1,6 +1,5 @@
 package cl.buildersoft.framework.util.crud;
 
-
 public class BSAction {
 	private String code = null;
 	private String defaultCode = null;
@@ -9,7 +8,6 @@ public class BSAction {
 	private String url = null;
 	private String[] natTable = null;
 	private String method = null;
-	private String function = null;
 	private Boolean disabled = Boolean.FALSE;
 
 	public String getMethod() {
@@ -80,7 +78,7 @@ public class BSAction {
 		this.natTable[2] = otherDatabase;
 		this.natTable[3] = otherTable;
 		this.setActionType(BSActionType.Record);
-		this.setUrl("/servlet/common/crud/NatTable");
+		this.setUrl("/servlet/common/NatTable");
 	}
 
 	public Boolean getDisabled() {
@@ -89,14 +87,6 @@ public class BSAction {
 
 	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
-	}
-
-	public String getFunction() {
-		return function;
-	}
-
-	public void setFunction(String function) {
-		this.function = function;
 	}
 
 }

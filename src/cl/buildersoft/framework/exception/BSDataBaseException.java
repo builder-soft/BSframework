@@ -10,11 +10,7 @@ public class BSDataBaseException extends BSException {
 		super(e);
 	}
 
-	public BSDataBaseException(String code) {
-		super(code);
-	}
-
-	public BSDataBaseException(String code, String message) {
-		super(code, message);
+	public BSDataBaseException(String message) {
+		super(message);
 	}
 }

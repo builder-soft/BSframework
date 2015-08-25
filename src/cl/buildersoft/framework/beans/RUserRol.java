@@ -1,6 +1,8 @@
 package cl.buildersoft.framework.beans;
 
-public class RUserRol extends BSBean {
+import java.io.Serializable;
+
+public class RUserRol extends BSBean implements Serializable{
 	private static final long serialVersionUID = -2596360240483281028L;
 	@SuppressWarnings("unused")
 	private String TABLE = "tR_UserRol";

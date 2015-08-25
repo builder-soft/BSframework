@@ -12,10 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import cl.buildersoft.framework.beans.BSTableConfig;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.util.BSDataUtils;
-import cl.buildersoft.framework.util.BSPaging;
+import cl.buildersoft.framework.util.crud.BSPaging;
+import cl.buildersoft.framework.util.crud.BSTableConfig;
 
 public class BSmySQL extends BSDataUtils {
 	CallableStatement callableStatement;
@@ -26,7 +26,7 @@ public class BSmySQL extends BSDataUtils {
 			try {
 				this.callableStatement.close();
 			} catch (SQLException e) {
-				throw new BSDataBaseException("0300", e.getMessage());
+				throw new BSDataBaseException(e);
 			}
 		}
 		super.closeSQL();
@@ -86,7 +86,7 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("0300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
 		return out;
 
@@ -118,7 +118,7 @@ public class BSmySQL extends BSDataUtils {
 			out = this.callableStatement.getString(1);
 
 		} catch (SQLException e) {
-			throw new BSDataBaseException("0300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
 
 		/*
@@ -163,7 +163,7 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("0300", e.getMessage());
+			throw new BSDataBaseException(e);
 		}
 		return out;
 	}
@@ -209,12 +209,10 @@ public class BSmySQL extends BSDataUtils {
 
 			for (i = 2; i <= colCount; i++) {
 				colName = metaData.getColumnName(i);
-				// if (colName.equalsIgnoreCase("cid")) {
 				colNames[i - 2] = colName;
-				// }
 			}
-		} catch (Exception e) {
-			throw new BSDataBaseException("0300", "Error al trabajar con la definicion de una tabla " + e.getMessage());
+		} catch (SQLException e) {
+			throw new BSDataBaseException("Error al trabajar con la definicion de una tabla " + e.getMessage());
 		}
 
 		Map<String, Object> innerData = null;
@@ -228,8 +226,7 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			throw new BSDataBaseException("0300", "Error al recorrer un ResultSet " + e.getMessage() + " "
-					+ e.getLocalizedMessage());
+			throw new BSDataBaseException("Error al recorrer un ResultSet " + e.getMessage() + " " + e.getLocalizedMessage());
 		}
 		this.closeSQL(rs);
 
@@ -245,7 +242,7 @@ public class BSmySQL extends BSDataUtils {
 			}
 		}
 	}
-	
+
 	public List<Object[]> resultSet2Matrix2(ResultSet rs) {
 		List<Object[]> out = new ArrayList<Object[]>();
 
@@ -253,7 +250,7 @@ public class BSmySQL extends BSDataUtils {
 		try {
 			ResultSetMetaData metaData = rs.getMetaData();
 			colCount = metaData.getColumnCount();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 

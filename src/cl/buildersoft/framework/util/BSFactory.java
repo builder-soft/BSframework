@@ -8,8 +8,11 @@ public class BSFactory {
 		try {
 			Class<?> javaClass = (Class<?>) Class.forName(className);
 			out = javaClass.newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			throw new BSProgrammerException(e);
+		} catch (InstantiationException e) {
+			throw new BSProgrammerException(e);
+		} catch (IllegalAccessException e) {
 			throw new BSProgrammerException(e);
 		}
 		return out;

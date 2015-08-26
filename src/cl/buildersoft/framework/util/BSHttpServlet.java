@@ -2,6 +2,8 @@ package cl.buildersoft.framework.util;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import cl.buildersoft.framework.beans.User;
 import cl.buildersoft.framework.database.BSmySQL;
+import cl.buildersoft.framework.exception.BSDataBaseException;
 
 public class BSHttpServlet extends HttpServlet {
 	private static final long serialVersionUID = 7807647668104655759L;
@@ -21,10 +24,24 @@ public class BSHttpServlet extends HttpServlet {
 			BSmySQL mysql = new BSmySQL();
 			out = mysql.getConnection(request);
 			request.setAttribute("Connection", out);
+
 		} else {
 			out = (Connection) connObject;
+			try {
+				if (out.isClosed()) {
+					request.setAttribute("Connection", null);
+					out = getConnection(request);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new BSDataBaseException(e);
+			}
 		}
 		return out;
+	}
+
+	protected void closeConnection(Connection conn) {
+		(new BSmySQL()).closeConnection(conn);
 	}
 
 	protected void setApplicationValue(HttpServletRequest request, String name, Object object) {
@@ -61,5 +78,25 @@ public class BSHttpServlet extends HttpServlet {
 
 	protected User getCurrentUser(HttpServletRequest request) {
 		return (User) request.getSession().getAttribute("User");
+	}
+
+	protected void showParameters(HttpServletRequest request) {
+		Enumeration<String> names = request.getParameterNames();
+		String name = null;
+		while (names.hasMoreElements()) {
+			name = (String) names.nextElement();
+
+			System.out.println(name + "=" + request.getParameter(name));
+
+		}
+	}
+
+	protected Boolean bootstrap(Connection conn) {
+		Boolean bootstrap = false;
+		BSConfig config = new BSConfig();
+		bootstrap = config.getBoolean(conn, "BOOTSTRAP");
+		bootstrap = bootstrap == null ? false : bootstrap;
+
+		return bootstrap;
 	}
 }

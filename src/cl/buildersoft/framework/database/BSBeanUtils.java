@@ -333,7 +333,8 @@ public class BSBeanUtils extends BSDataUtils {
 	}
 
 	private String buildSelectSQLString(String tableName, String[] tableFields, String[] tableFieldsWithOutId, String where) {
-		String sql = "SELECT " + unSplit(tableFieldsWithOutId, ",") + " FROM " + tableName + " WHERE " + where;
+		String sql = "SELECT " + unSplit(tableFieldsWithOutId, ",") + " FROM " + tableName
+				+ (where != null ? " WHERE " + where : "");
 		return sql;
 	}
 

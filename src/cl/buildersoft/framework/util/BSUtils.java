@@ -8,11 +8,11 @@ import cl.buildersoft.framework.util.crud.BSField;
 public class BSUtils {
 	public static List<Object> array2List(Object... prms) {
 		List<Object> out = new ArrayList<Object>();
-
-		for (Object o : prms) {
-			out.add(o);
+		if (prms != null) {
+			for (Object o : prms) {
+				out.add(o);
+			}
 		}
-
 		return out;
 	}
 

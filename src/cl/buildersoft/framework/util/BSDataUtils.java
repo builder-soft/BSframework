@@ -124,7 +124,7 @@ public class BSDataUtils {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameters, preparedStatement);
 			out = preparedStatement.executeQuery();
-		} catch (SQLException  e) {
+		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 
@@ -166,19 +166,25 @@ public class BSDataUtils {
 					} else if (param instanceof java.util.Date) {
 						java.sql.Timestamp time = new java.sql.Timestamp(((java.util.Date) param).getTime());
 						preparedStatement.setTimestamp(initIndex + 1, time);
+
 					} else if (param == null) {
 						preparedStatement.setNull(initIndex + 1, java.sql.Types.NULL);
 					} else {
-						String message = "Object type not cataloged, please insert code in \"cl.buildersoft.framework.util.BSDataUtils\" for class \""
-								+ param.getClass().getName() + "\"";
+						preparedStatement.setObject(initIndex + 1, param);
 
-						throw new BSProgrammerException(message);
+						/**
+						 * String message =
+						 * "Object type not cataloged, please insert code in \"cl.buildersoft.framework.util.BSDataUtils\" for class \""
+						 * + param.getClass().getName() + "\"";
+						 * 
+						 * throw new BSProgrammerException(message);
+						 */
 					}
 
 					initIndex++;
 				}
 			}
-		} catch (SQLException  e) {
+		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 	}
@@ -228,7 +234,7 @@ public class BSDataUtils {
 			Context envContext = (Context) initContext.lookup("java:/comp/env");
 			DataSource ds = (DataSource) envContext.lookup(dataSourceName);
 			conn = ds.getConnection();
-		} catch (SQLException  e) {
+		} catch (SQLException e) {
 			throw new BSConfigurationException(e);
 		} catch (NamingException e) {
 			throw new BSConfigurationException(e);
@@ -279,7 +285,7 @@ public class BSDataUtils {
 			if (includeColumns) {
 				out.add(innerArray);
 			}
-		} catch (SQLException  e) {
+		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 

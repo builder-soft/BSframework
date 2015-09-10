@@ -55,4 +55,12 @@ public class BSUtils {
 		return out;
 	}
 
+	public static String getCommas(Object[] values) {
+		String out = "";
+		for (int i = 0; i < values.length; i++) {
+			out += "?,";
+		}
+		out = out.substring(0, out.length() - 1);
+		return out;
+	}
 }

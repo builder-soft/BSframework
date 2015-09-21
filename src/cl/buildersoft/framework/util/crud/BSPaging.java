@@ -141,7 +141,7 @@ public class BSPaging {
 		Boolean useField = null;
 		for (BSField f : table.getFields()) {
 			if (excludeBoolean) {
-				useField = !f.getType().equals(BSDataTypeEnum.BOOLEAN) && !f.getType().equals(BSDataTypeEnum.TEXT);
+				useField = !f.getType().isBoolean() && !f.getType().getDataTypeEnum().equals(BSDataTypeEnum.TEXT);
 				if (useField) {
 					if (validateNull) {
 						out += "IFNULL(" + f.getName() + ",'')" + separeitor;

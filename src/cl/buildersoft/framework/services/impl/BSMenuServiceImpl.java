@@ -20,35 +20,35 @@ import cl.buildersoft.framework.util.BSDataUtils;
 public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 
 	@Override
-	public Menu getMenu(Connection conn, List<Rol> rols) {
-		return getMenu(conn, rols, null);
+	public Menu getMenu(Connection conn, boolean isAdmin, List<Rol> rols) {
+		return getMenu(conn, isAdmin, rols, null);
 	}
 
 	@Override
-	public Menu getMenu(Connection conn, List<Rol> rols, Long type) {
+	public Menu getMenu(Connection conn, boolean isAdmin, List<Rol> rols, Long type) {
 		Menu menu = null;
 
 		Submenu sub = null;
 		if (rols == null) {
-			List<Submenu> main = fillSubmenu(conn, sub, null, menu, type);
+			List<Submenu> main = fillSubmenu(conn, isAdmin, sub, null, menu, type);
 			menu = new Menu();
 			addMainMenuToMenu(main, menu);
 		} else {
 			Rol rol = rols.get(0);
 
-			List<Submenu> main = fillSubmenu(conn, sub, rol, menu, type);
+			List<Submenu> main = fillSubmenu(conn, isAdmin, sub, rol, menu, type);
 			menu = new Menu();
 			addMainMenuToMenu(main, menu);
 			/** ------------- */
 			for (int i = 1; i < rols.size(); i++) {
 				rol = rols.get(i);
 
-				main = fillSubmenu(conn, sub, rol, menu, type);
+				main = fillSubmenu(conn, isAdmin, sub, rol, menu, type);
 				addMainMenuToMenu(main, menu);
 
 				for (Submenu sub1 : menu.list()) {
 
-					complement(conn, sub1, rol, menu, type);
+					complement(conn, isAdmin, sub1, rol, menu, type);
 				}
 			}
 		}
@@ -56,27 +56,27 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 		return menu;
 	}
 
-	private List<Submenu> fillSubmenu(Connection conn, Submenu main, Rol rol, Menu menu, Long type) {
-		List<Submenu> subList = getSubmenu(conn, main, rol, type);
+	private List<Submenu> fillSubmenu(Connection conn, boolean isAdmin, Submenu main, Rol rol, Menu menu, Long type) {
+		List<Submenu> subList = getSubmenu(conn, isAdmin, main, rol, type);
 
 		for (Submenu sub : subList) {
-			List<Submenu> auxList = fillSubmenu(conn, sub, rol, menu, type);
+			List<Submenu> auxList = fillSubmenu(conn, isAdmin, sub, rol, menu, type);
 			sub.addSubmenu(auxList, menu);
 		}
 		return subList;
 	}
 
-	private void complement(Connection conn, Submenu main, Rol rol, Menu menu, Long type) {
-		List<Submenu> subList = getSubmenu(conn, main, rol, type);
+	private void complement(Connection conn, boolean isAdmin, Submenu main, Rol rol, Menu menu, Long type) {
+		List<Submenu> subList = getSubmenu(conn, isAdmin, main, rol, type);
 
 		main.addSubmenu(subList, menu);
 
 		for (Submenu sub : main.list()) {
-			complement(conn, sub, rol, menu, type);
+			complement(conn, isAdmin, sub, rol, menu, type);
 		}
 	}
 
-	private List<Submenu> getSubmenu(Connection conn, Submenu sub, Rol rol, Long type) {
+	private List<Submenu> getSubmenu(Connection conn, boolean isAdmin, Submenu sub, Rol rol, Long type) {
 		String sql = null;
 		List<Object> prms = null;
 		Option parent = sub != null ? sub.getOption() : null;
@@ -85,23 +85,35 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 			sql = "SELECT cId AS cOption ";
 			sql += "FROM tOption ";
 			sql += "WHERE cParent IS NULL";
+			if (!isAdmin) {
+				sql += " AND cIsAdmin=FALSE";
+			}
 			prms = null;
 		} else if (parent == null && rol != null) {
 			sql = "SELECT cOption ";
 			sql += "FROM tR_RolOption r ";
 			sql += "LEFT JOIN tOption o ON r.cOption=o.cId ";
 			sql += "WHERE o.cParent IS NULL AND r.cRol=?";
+			if (!isAdmin) {
+				sql += " AND cIsAdmin=FALSE";
+			}
 			prms = array2List(rol.getId());
 		} else if (parent != null && rol == null) {
 			sql = "SELECT cId AS cOption ";
 			sql += "FROM tOption ";
 			sql += "WHERE cParent=?";
+			if (!isAdmin) {
+				sql += " AND cIsAdmin=FALSE";
+			}
 			prms = array2List(parent.getId());
 		} else if (parent != null && rol != null) {
 			sql = "SELECT cOption ";
 			sql += "FROM tR_RolOption r ";
 			sql += "LEFT JOIN tOption o ON r.cOption=o.cId ";
 			sql += "WHERE o.cParent=? AND r.cRol=?";
+			if (!isAdmin) {
+				sql += " AND cIsAdmin=FALSE";
+			}
 			prms = array2List(parent.getId(), rol.getId());
 		}
 

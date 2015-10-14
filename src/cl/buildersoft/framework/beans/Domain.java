@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Domain extends BSBean implements Serializable {
 	private static final long serialVersionUID = 372116778968735407L;
 	private String name = null;
-	private String alias = null;
+	private String database = null;
 	@SuppressWarnings("unused")
 	private String TABLE = "tDomain";
 
@@ -17,17 +17,19 @@ public class Domain extends BSBean implements Serializable {
 		this.name = name;
 	}
 
-	public String getAlias() {
-		return alias;
+	public String getDatabase() {
+		return database;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setDatabase(String database) {
+		this.database = database;
 	}
 
 	@Override
 	public String toString() {
-		return "Domain [name=" + name + ", alias=" + alias + "]";
+		return "Domain [name=" + name + ", database=" + database + ", Id=" + getId() + "]";
 	}
+
+	 
 
 }

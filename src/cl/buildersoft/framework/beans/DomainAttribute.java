@@ -2,7 +2,7 @@ package cl.buildersoft.framework.beans;
 
 import java.io.Serializable;
 
-public class DomainAttribute extends BSBean implements Serializable{
+public class DomainAttribute extends BSBean implements Serializable {
 	private static final long serialVersionUID = -1348815045687895170L;
 	/**
 	 * <code>
@@ -52,6 +52,12 @@ CREATE TABLE IF NOT EXISTS tDomainAttribute (
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "DomainAttribute [domain=" + domain + ", key=" + key + ", name=" + name + ", value=" + value + ", Id=" + getId()
+				+ "]";
 	}
 
 }

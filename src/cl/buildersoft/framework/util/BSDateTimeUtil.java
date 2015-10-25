@@ -36,12 +36,15 @@ public class BSDateTimeUtil {
 		date.setTime(calendar.getTimeInMillis());
 		return date;
 	}
-	/**<code>
+
+	/**
+	 * <code>
 	public static java.sql.Date calendar2SQLDate(Calendar calendar) {
 		java.sql.Date date = new java.sql.Date(calendar.getTimeInMillis());
 		return date;
 	}
-</code>*/
+</code>
+	 */
 	public static Timestamp calendar2Timestamp(Calendar calendar) {
 		return new Timestamp(calendar.getTimeInMillis());
 	}
@@ -69,20 +72,23 @@ public class BSDateTimeUtil {
 
 	public static Boolean isValidDate(String date, String format) {
 		Boolean out = Boolean.TRUE;
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		if (date.length() > 0 && date != null) {
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
 
-		Date testDate = null;
+			Date testDate = null;
 
-		try {
-			testDate = sdf.parse(date);
-		} catch (ParseException e) {
-			out = Boolean.FALSE;
+			try {
+				testDate = sdf.parse(date);
+			} catch (ParseException e) {
+				out = Boolean.FALSE;
+			}
+
+			if (!sdf.format(testDate).equals(date)) {
+				out = Boolean.FALSE;
+			}
+		} else {
+			out = false;
 		}
-
-		if (!sdf.format(testDate).equals(date)) {
-			out = Boolean.FALSE;
-		}
-
 		return out;
 	}
 

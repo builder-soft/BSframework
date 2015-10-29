@@ -29,4 +29,9 @@ public class BSTreeNode {
 		this.value = value;
 	}
 
+	@Override
+	public String toString() {
+		return "BSTreeNode [value=" + value + ", children={" + children + "}]";
+	}
+
 }

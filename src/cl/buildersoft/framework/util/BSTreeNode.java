@@ -3,15 +3,14 @@ package cl.buildersoft.framework.util;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BSTreeNode {
-	private List<BSTreeNode> children;
-	private Object value;
+	private List<BSTreeNode> children = null;
+	private Object value = null;
 
-	public BSTreeNode(Object value) {
+	public BSTreeNode() {
 		super();
 		this.children = new ArrayList<BSTreeNode>();
-		this.value = value;
+
 	}
 
 	public List<BSTreeNode> getChildren() {

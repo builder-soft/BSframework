@@ -10,6 +10,4 @@ public interface BSUserService {
 	public User login(Connection conn, String mail, String password);
 
 	public List<Rol> getRols(Connection conn, User user);
-
-
 }

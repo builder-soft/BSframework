@@ -26,7 +26,6 @@ import cl.buildersoft.framework.beans.Option;
 import cl.buildersoft.framework.beans.Rol;
 import cl.buildersoft.framework.dataType.BSDataType;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
-import cl.buildersoft.framework.dataType.BSDataTypeFactory;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;

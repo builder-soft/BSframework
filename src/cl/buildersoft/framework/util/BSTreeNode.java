@@ -31,7 +31,7 @@ public class BSTreeNode {
 
 	@Override
 	public String toString() {
-		return "BSTreeNode [value=" + value + ", children={" + children + "}]";
+		return "{value=" + value + ", children=" + children + "}";
 	}
 
 }

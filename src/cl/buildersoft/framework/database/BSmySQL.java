@@ -86,6 +86,7 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
+			System.out.println("Error on '" + name + "' width " + parameter.toString());
 			throw new BSDataBaseException(e);
 		}
 		return out;
@@ -118,6 +119,7 @@ public class BSmySQL extends BSDataUtils {
 			out = this.callableStatement.getString(1);
 
 		} catch (SQLException e) {
+			System.out.println("Error on '" + name + "' width " + parameter.toString());
 			throw new BSDataBaseException(e);
 		}
 

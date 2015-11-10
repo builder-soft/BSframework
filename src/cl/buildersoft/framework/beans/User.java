@@ -44,4 +44,9 @@ public class User extends BSBean implements Serializable {
 		this.admin = admin;
 	}
 
+	@Override
+	public String toString() {
+		return "User [mail=" + mail + ", name=" + name + ", password=" + password + ", admin=" + admin + ", Id=" + getId() + "]";
+	}
+
 }

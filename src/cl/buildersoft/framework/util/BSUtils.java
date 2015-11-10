@@ -16,6 +16,15 @@ public class BSUtils {
 		return out;
 	}
 
+	public static Object[] array2ObjectArray(Object... prms) {
+		Object[] out = new Object[prms.length];
+		Integer i = 0;
+		for (Object prm : prms) {
+			out[i++] = prm;
+		}
+		return out;
+	}
+
 	public static Object[] list2Array(List<Object> prms) {
 		Object[] out = new Object[prms.size()];
 

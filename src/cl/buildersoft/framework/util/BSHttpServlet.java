@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +17,7 @@ import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 
 public class BSHttpServlet extends HttpServlet {
+	private static final Logger LOG = Logger.getLogger(BSHttpServlet.class.getName());
 	private static final long serialVersionUID = 7807647668104655759L;
 
 	protected Connection getConnection(HttpServletRequest request) {
@@ -86,7 +89,7 @@ public class BSHttpServlet extends HttpServlet {
 		while (names.hasMoreElements()) {
 			name = (String) names.nextElement();
 
-			System.out.println(name + "=" + request.getParameter(name));
+			LOG.log(Level.CONFIG, "Name={0}", request.getParameter(name));
 
 		}
 	}

@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.util.BSDataUtils;
@@ -19,6 +21,8 @@ import cl.buildersoft.framework.util.crud.BSTableConfig;
 
 public class BSmySQL extends BSDataUtils {
 	CallableStatement callableStatement;
+
+	private final static Logger LOG = Logger.getLogger(BSmySQL.class.getName());
 
 	@Override
 	public void closeSQL() {
@@ -86,7 +90,7 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("Error on '" + name + "' width " + parameter.toString());
+			LOG.log(Level.SEVERE, "Error reading ResultSet in callComplexSP", e);
 			throw new BSDataBaseException(e);
 		}
 		return out;
@@ -119,7 +123,7 @@ public class BSmySQL extends BSDataUtils {
 			out = this.callableStatement.getString(1);
 
 		} catch (SQLException e) {
-			System.out.println("Error on '" + name + "' width " + parameter.toString());
+			LOG.log(Level.SEVERE, "Error executing function en callFunction", e);
 			throw new BSDataBaseException(e);
 		}
 
@@ -165,7 +169,8 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("Error on '" + name + "' width " + parameter.toString());
+			LOG.log(Level.SEVERE, "Error on '" + name + "' width " + parameter.toString(), e);
+
 			throw new BSDataBaseException(e);
 		}
 		return out;

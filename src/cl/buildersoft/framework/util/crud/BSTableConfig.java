@@ -9,14 +9,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.dataType.BSDataTypeFactory;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
+import cl.buildersoft.framework.util.BSUtils;
 
 public class BSTableConfig {
+	private final static Logger LOG = Logger.getLogger(BSTableConfig.class.getName());
 	private String database = null;
 	private String tableName = null;
 	private String[] fields = null;
@@ -394,20 +398,13 @@ public class BSTableConfig {
 	}
 
 	private void setRealType(ResultSetMetaData metaData, Integer i, BSField field) {
-		/**
-		 * <code>
-		System.out.println( name + " "+ metaData.getColumnTypeName(i));
-		cId BIGINT
-		cName VARCHAR
-		cBorn DATE
-		cLastLogin TIMESTAMP
-		cSalary DOUBLE
-		</code>
-		 */
+	 
 		String typeName;
 		try {
+			LOG.log(Level.FINE, "{0} - {1}",
+					BSUtils.array2ObjectArray(metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
 			typeName = metaData.getColumnTypeName(i);
-			// System.out.println( metaData.getColumnClassName(i));
+		 
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}

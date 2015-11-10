@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +15,7 @@ import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 
 public class BSDateTimeUtil {
+	private static final Logger LOG = Logger.getLogger(BSDateTimeUtil.class.getName());
 	public static final String SQL_FORMAT = "yyyy-MM-dd";
 	private static String formatDate = null;
 	private static String[] months = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre",
@@ -56,6 +58,7 @@ public class BSDateTimeUtil {
 	}
 
 	public static Calendar string2Calendar(String dateString, String format) {
+		LOG.entering(BSDateTimeUtil.class.getName(), "string2Calendar", BSUtils.array2ObjectArray(dateString, format));
 		DateFormat formatter = new SimpleDateFormat(format);
 		Calendar out = null;
 		try {
@@ -65,8 +68,8 @@ public class BSDateTimeUtil {
 		} catch (ParseException e) {
 			throw new BSProgrammerException(e);
 		}
-		// System.out.println(calendar2String(out));
 
+		LOG.exiting(BSDateTimeUtil.class.getName(), "string2Calendar", out);
 		return out;
 	}
 

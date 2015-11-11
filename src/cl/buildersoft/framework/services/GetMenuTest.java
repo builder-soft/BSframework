@@ -23,8 +23,7 @@ public class GetMenuTest {
 		User user = new User();
 		user.setId(1L);
 
-		Connection conn = new BSDataUtils().getConnection("org.gjt.mm.mysql.Driver", "localhost", "bsframework", "12870668",
-				"root");
+		Connection conn = null; //new BSDataUtils().getConnection("org.gjt.mm.mysql.Driver", "localhost", "bsframework", "12870668",				"root");
 
 		BSMenuService menuService = new BSMenuServiceImpl();
 		BSUserService userService = new BSUserServiceImpl();
@@ -42,8 +41,7 @@ public class GetMenuTest {
 		User user = new User();
 		user.setId(1L);
 
-		Connection conn = new BSDataUtils().getConnection("org.gjt.mm.mysql.Driver", "localhost", "bsframework", "12870668",
-				"root");
+		Connection conn = null; //new BSDataUtils().getConnection("org.gjt.mm.mysql.Driver", "localhost", "bsframework", "12870668",				"root");
 
 		BSUserService userService = new BSUserServiceImpl();
 		List<Rol> rols = userService.getRols(conn, user);

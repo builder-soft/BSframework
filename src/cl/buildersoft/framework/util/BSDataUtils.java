@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -26,6 +28,7 @@ import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 
 public class BSDataUtils {
+	private static final Logger LOG = Logger.getLogger(BSDataUtils.class.getName());
 	PreparedStatement preparedStatement = null;
 
 	public void closeSQL(ResultSet rs) {
@@ -137,14 +140,8 @@ public class BSDataUtils {
 	}
 
 	protected void parametersToStatement(List<Object> parameters, PreparedStatement preparedStatement, Integer initIndex) {
-		// this.callableStatement = conn.prepareCall(sqlStatement);
 		try {
 			if (parameters != null) {
-				// int len = parameters.size();
-				// int initIndex = 0;
-				// Object param = null;
-				// for (int i = 0; i < len; i++) {
-				// param = parameters[i];
 				for (Object param : parameters) {
 					if (param instanceof String) {
 						preparedStatement.setString(initIndex + 1, (String) param);
@@ -170,15 +167,10 @@ public class BSDataUtils {
 					} else if (param == null) {
 						preparedStatement.setNull(initIndex + 1, java.sql.Types.NULL);
 					} else {
+						LOG.logp(Level.WARNING, BSDataUtils.class.getName(), "parametersToStatement",
+								"Object type not cataloged for type '{0}'. Will be like a Object class", param.getClass()
+										.getName());
 						preparedStatement.setObject(initIndex + 1, param);
-
-						/**
-						 * String message =
-						 * "Object type not cataloged, please insert code in \"cl.buildersoft.framework.util.BSDataUtils\" for class \""
-						 * + param.getClass().getName() + "\"";
-						 * 
-						 * throw new BSProgrammerException(message);
-						 */
 					}
 
 					initIndex++;
@@ -188,32 +180,11 @@ public class BSDataUtils {
 			throw new BSDataBaseException(e);
 		}
 	}
-
+/**
+ * <code>
 	@Deprecated
 	public Connection getConnection(ServletContext context) {
 		return getConnection(context, "cosoav");
-	}
-
-	@Deprecated
-	public Connection getConnection(Map<String, DomainAttribute> domainAttribute) {
-		String driverName = domainAttribute.get("database.driver").getValue();
-		String serverName = domainAttribute.get("database.server").getValue();
-		String database = domainAttribute.get("database.database").getValue();
-		String username = domainAttribute.get("database.username").getValue();
-		String password = domainAttribute.get("database.password").getValue();
-
-		return getConnection(driverName, serverName, database, password, username);
-	}
-
-	@Deprecated
-	public Connection getConnection(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		Map<String, DomainAttribute> domainAttribute = null;
-		synchronized (session) {
-			domainAttribute = (Map<String, DomainAttribute>) session.getAttribute("DomainAttribute");
-		}
-
-		return getConnection(domainAttribute);
 	}
 
 	@Deprecated
@@ -225,8 +196,28 @@ public class BSDataUtils {
 		String password = context.getInitParameter(prefix + ".database.password");
 		return getConnection(driverName, serverName, database, password, username);
 	}
+</code> */
+	private Connection getConnection(Map<String, DomainAttribute> domainAttribute) {
+		String driverName = domainAttribute.get("database.driver").getValue();
+		String serverName = domainAttribute.get("database.server").getValue();
+		String database = domainAttribute.get("database.database").getValue();
+		String username = domainAttribute.get("database.username").getValue();
+		String password = domainAttribute.get("database.password").getValue();
 
-	public Connection getConnection2(ServletContext ctx, String dataSourceName) {
+		return getConnection(driverName, serverName, database, password, username);
+	}
+
+	public Connection getConnection(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		Map<String, DomainAttribute> domainAttribute = null;
+		synchronized (session) {
+			domainAttribute = (Map<String, DomainAttribute>) session.getAttribute("DomainAttribute");
+		}
+
+		return getConnection2(domainAttribute);
+	}
+
+	public Connection getConnection2(String dataSourceName) {
 		Connection conn = null;
 
 		try {
@@ -235,13 +226,28 @@ public class BSDataUtils {
 			DataSource ds = (DataSource) envContext.lookup(dataSourceName);
 			conn = ds.getConnection();
 		} catch (SQLException e) {
+			LOG.logp(Level.SEVERE, BSDataUtils.class.getName(), "getConnection2",
+					"Error connecting width DataSource (SQLException)", e);
 			throw new BSConfigurationException(e);
 		} catch (NamingException e) {
+			LOG.logp(Level.SEVERE, BSDataUtils.class.getName(), "getConnection2",
+					"Error connecting width DataSource (NamingException)", e);
 			throw new BSConfigurationException(e);
 		}
 
 		return conn;
+	}
 
+	public Connection getConnection2(Map<String, DomainAttribute> domainAttribute) {
+		DomainAttribute dataSource = domainAttribute.get("database.datasource");
+		Connection conn = null;
+		if (dataSource != null) {
+			conn = getConnection2(dataSource.getValue());
+		} else {
+			conn = getConnection(domainAttribute);
+		}
+
+		return conn;
 	}
 
 	public Connection getConnection(String driverName, String serverName, String database, String password, String username) {
@@ -256,6 +262,7 @@ public class BSDataUtils {
 		try {
 			connection = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
+			LOG.log(Level.SEVERE, "Error connecting to database using MySQL", e);
 			throw new BSDataBaseException(e);
 		}
 

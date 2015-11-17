@@ -29,6 +29,10 @@ public class BSDateTimeUtil {
 		return months[date.getMonth()];
 	}
 
+	public static String calendar2String(Calendar calendar) {
+		return date2String(calendar2Date(calendar), "yyyy-MM-dd hh:mm:ss.S");
+	}
+
 	public static String calendar2String(Calendar calendar, String format) {
 		return date2String(calendar2Date(calendar), format);
 	}

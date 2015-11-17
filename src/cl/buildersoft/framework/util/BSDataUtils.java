@@ -168,7 +168,7 @@ public class BSDataUtils {
 						preparedStatement.setNull(initIndex + 1, java.sql.Types.NULL);
 					} else {
 						LOG.logp(Level.WARNING, BSDataUtils.class.getName(), "parametersToStatement",
-								"Object type not cataloged for type '{0}'. Will be like a Object class", param.getClass()
+								"Object type not cataloged for type {0}. Will be like a Object class", param.getClass()
 										.getName());
 						preparedStatement.setObject(initIndex + 1, param);
 					}

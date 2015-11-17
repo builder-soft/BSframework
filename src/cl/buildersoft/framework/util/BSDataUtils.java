@@ -168,8 +168,7 @@ public class BSDataUtils {
 						preparedStatement.setNull(initIndex + 1, java.sql.Types.NULL);
 					} else {
 						LOG.logp(Level.WARNING, BSDataUtils.class.getName(), "parametersToStatement",
-								"Object type not cataloged for type {0}. Will be like a Object class", param.getClass()
-										.getName());
+								"Object type not cataloged for type {0}. Will be like a Object class", param.getClass().getName());
 						preparedStatement.setObject(initIndex + 1, param);
 					}
 
@@ -180,23 +179,46 @@ public class BSDataUtils {
 			throw new BSDataBaseException(e);
 		}
 	}
-/**
- * <code>
-	@Deprecated
-	public Connection getConnection(ServletContext context) {
-		return getConnection(context, "cosoav");
+
+	/**
+	 * <code>
+	 * 
+	 * @Deprecated public Connection getConnection(ServletContext context) {
+	 *             return getConnection(context, "cosoav"); }
+	 * @Deprecated public Connection getConnection(ServletContext context,
+	 *             String prefix) { String driverName =
+	 *             context.getInitParameter(prefix + ".database.driver"); String
+	 *             serverName = context.getInitParameter(prefix +
+	 *             ".database.server"); String database =
+	 *             context.getInitParameter(prefix + ".database.database");
+	 *             String username = context.getInitParameter(prefix +
+	 *             ".database.username"); String password =
+	 *             context.getInitParameter(prefix + ".database.password");
+	 *             return getConnection(driverName, serverName, database,
+	 *             password, username); } </code>
+	 */
+	public Connection getConnection2(ServletContext context) {
+		String datasource = context.getInitParameter("bsframework.database.datasource");
+		LOG.log(Level.CONFIG, "Datasource for bsframework database is {0}", datasource);
+		String driverName = null;
+		String serverName = null;
+		String database = null;
+		String username = null;
+		String password = null;
+		Connection conn = null;
+		if (datasource == null) {
+			driverName = context.getInitParameter("bsframework.database.driver");
+			serverName = context.getInitParameter("bsframework.database.server");
+			database = context.getInitParameter("bsframework.database.database");
+			username = context.getInitParameter("bsframework.database.username");
+			password = context.getInitParameter("bsframework.database.password");
+			conn = getConnection(driverName, serverName, database, password, username);
+		} else {
+			conn = getConnection2(datasource);
+		}
+		return conn;
 	}
 
-	@Deprecated
-	public Connection getConnection(ServletContext context, String prefix) {
-		String driverName = context.getInitParameter(prefix + ".database.driver");
-		String serverName = context.getInitParameter(prefix + ".database.server");
-		String database = context.getInitParameter(prefix + ".database.database");
-		String username = context.getInitParameter(prefix + ".database.username");
-		String password = context.getInitParameter(prefix + ".database.password");
-		return getConnection(driverName, serverName, database, password, username);
-	}
-</code> */
 	private Connection getConnection(Map<String, DomainAttribute> domainAttribute) {
 		String driverName = domainAttribute.get("database.driver").getValue();
 		String serverName = domainAttribute.get("database.server").getValue();

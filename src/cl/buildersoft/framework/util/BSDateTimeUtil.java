@@ -62,7 +62,7 @@ public class BSDateTimeUtil {
 	}
 
 	public static Calendar string2Calendar(String dateString, String format) {
-		LOG.entering(BSDateTimeUtil.class.getName(), "string2Calendar", BSUtils.array2ObjectArray(dateString, format));
+//		LOG.entering(BSDateTimeUtil.class.getName(), "string2Calendar", BSUtils.array2ObjectArray(dateString, format));
 		DateFormat formatter = new SimpleDateFormat(format);
 		Calendar out = null;
 		try {
@@ -73,7 +73,7 @@ public class BSDateTimeUtil {
 			throw new BSProgrammerException(e);
 		}
 
-		LOG.exiting(BSDateTimeUtil.class.getName(), "string2Calendar", out);
+//		LOG.exiting(BSDateTimeUtil.class.getName(), "string2Calendar", BSDateTimeUtil.calendar2String(out));
 		return out;
 	}
 

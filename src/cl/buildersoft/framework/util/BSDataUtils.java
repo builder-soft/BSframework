@@ -25,7 +25,6 @@ import javax.sql.DataSource;
 import cl.buildersoft.framework.beans.DomainAttribute;
 import cl.buildersoft.framework.exception.BSConfigurationException;
 import cl.buildersoft.framework.exception.BSDataBaseException;
-import cl.buildersoft.framework.exception.BSProgrammerException;
 
 public class BSDataUtils {
 	private static final Logger LOG = Logger.getLogger(BSDataUtils.class.getName());
@@ -109,6 +108,8 @@ public class BSDataUtils {
 			rs.close();
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			closeSQL(rs);
 		}
 		return out;
 	}

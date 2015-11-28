@@ -28,6 +28,7 @@ import cl.buildersoft.framework.exception.BSDataBaseException;
 
 public class BSDataUtils {
 	private static final Logger LOG = Logger.getLogger(BSDataUtils.class.getName());
+
 	PreparedStatement preparedStatement = null;
 
 	public void closeSQL(ResultSet rs) {
@@ -59,12 +60,21 @@ public class BSDataUtils {
 
 	public Integer update(Connection conn, String sql, List<Object> parameter) {
 		int rowsAffected = 0;
+		PreparedStatement preparedStatement = null;
 		try {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameter, preparedStatement);
 			rowsAffected = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			if (preparedStatement != null) {
+				try {
+					preparedStatement.close();
+				} catch (SQLException e) {
+					throw new BSDataBaseException(e);
+				}
+			}
 		}
 
 		return rowsAffected;
@@ -72,7 +82,7 @@ public class BSDataUtils {
 
 	public Long insert(Connection conn, String sql, List<Object> parameter) {
 		Long newKey = 0L;
-
+		PreparedStatement preparedStatement = null;
 		try {
 			preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			parametersToStatement(parameter, preparedStatement);
@@ -87,6 +97,14 @@ public class BSDataUtils {
 			// rs.close();
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			if (preparedStatement != null) {
+				try {
+					preparedStatement.close();
+				} catch (SQLException e) {
+					throw new BSDataBaseException(e);
+				}
+			}
 		}
 
 		return newKey;
@@ -124,6 +142,8 @@ public class BSDataUtils {
 	public ResultSet queryResultSet(Connection conn, String sql, List<Object> parameters) {
 		ResultSet out = null;
 
+//		PreparedStatement preparedStatement = null;
+
 		try {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameters, preparedStatement);
@@ -131,6 +151,15 @@ public class BSDataUtils {
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
+//		finally {
+//			if (preparedStatement != null) {
+//				try {
+//					preparedStatement.close();
+//				} catch (SQLException e) {
+//					throw new BSDataBaseException(e);
+//				}
+//			}
+//		}
 
 		return out;
 	}

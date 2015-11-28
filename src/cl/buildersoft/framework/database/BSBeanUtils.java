@@ -221,6 +221,7 @@ public class BSBeanUtils extends BSDataUtils {
 			if (rs != null) {
 				(new BSmySQL()).closeSQL(rs);
 			}
+			closeSQL();
 		}
 		return out;
 	}

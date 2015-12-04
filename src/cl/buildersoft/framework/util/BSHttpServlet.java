@@ -94,12 +94,17 @@ public class BSHttpServlet extends HttpServlet {
 		}
 	}
 
-	protected Boolean bootstrap(Connection conn) {
+	protected Boolean bootstrap(Connection conn) {/*
+String out = getServletContext().getAttribute("bsframework.gui.bootstrap") .toString() ;
+LOG.log(Level.INFO, "Bootrstap config as {0}",out);
+		return Boolean.parseBoolean(out);
+		*/
 		Boolean bootstrap = false;
 		BSConfig config = new BSConfig();
 		bootstrap = config.getBoolean(conn, "BOOTSTRAP");
 		bootstrap = bootstrap == null ? false : bootstrap;
 
 		return bootstrap;
+		
 	}
 }

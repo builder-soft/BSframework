@@ -35,6 +35,7 @@ public class BSDataUtils {
 		if (rs != null) {
 			try {
 				rs.close();
+				rs = null;
 			} catch (SQLException e) {
 				throw new BSDataBaseException(e);
 			}
@@ -45,6 +46,7 @@ public class BSDataUtils {
 		if (this.preparedStatement != null) {
 			try {
 				this.preparedStatement.close();
+				this.preparedStatement = null;
 			} catch (SQLException e) {
 				throw new BSDataBaseException(e);
 			}
@@ -128,6 +130,7 @@ public class BSDataUtils {
 			throw new BSDataBaseException(e);
 		} finally {
 			closeSQL(rs);
+			closeSQL();
 		}
 		return out;
 	}
@@ -142,7 +145,7 @@ public class BSDataUtils {
 	public ResultSet queryResultSet(Connection conn, String sql, List<Object> parameters) {
 		ResultSet out = null;
 
-//		PreparedStatement preparedStatement = null;
+		// PreparedStatement preparedStatement = null;
 
 		try {
 			preparedStatement = conn.prepareStatement(sql);
@@ -151,15 +154,15 @@ public class BSDataUtils {
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
-//		finally {
-//			if (preparedStatement != null) {
-//				try {
-//					preparedStatement.close();
-//				} catch (SQLException e) {
-//					throw new BSDataBaseException(e);
-//				}
-//			}
-//		}
+		// finally {
+		// if (preparedStatement != null) {
+		// try {
+		// preparedStatement.close();
+		// } catch (SQLException e) {
+		// throw new BSDataBaseException(e);
+		// }
+		// }
+		// }
 
 		return out;
 	}
@@ -259,6 +262,7 @@ public class BSDataUtils {
 		return getConnection(driverName, serverName, database, password, username);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Connection getConnection(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Map<String, DomainAttribute> domainAttribute = null;
@@ -350,7 +354,6 @@ public class BSDataUtils {
 
 		try {
 			while (rs.next()) {
-
 				innerArray = new Object[colCount];
 				for (i = 1; i <= colCount; i++) {
 					innerArray[i - 1] = rs.getObject(i);

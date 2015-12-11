@@ -602,7 +602,7 @@ public class BSTableConfig {
 	public BSField getField(String name) {
 		BSField out = this.fieldsMap.get(name);
 		if (out == null) {
-			LOG.log(Level.SEVERE, "Field {0} not found, the fields list is {1}", BSUtils.array2List(name, this.fieldsMap));
+			LOG.log(Level.SEVERE, "Field {0} not found, the fields list is {1}", BSUtils.array2ObjectArray(name, this.fieldsMap));
 			throw new BSProgrammerException("Field '" + name + "' not found");
 		}
 		return out;

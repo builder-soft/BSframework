@@ -87,7 +87,8 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "Error reading ResultSet in callComplexSP", e);
+			LOG.log(Level.SEVERE, "Error executing query in callComplexSP, the commans name is '" + name + "', parameters are "
+					+ breakDown(parameter), e);
 			throw new BSDataBaseException(e);
 		} finally {
 			if (callableStatement != null) {
@@ -109,6 +110,17 @@ public class BSmySQL extends BSDataUtils {
 		}
 		return out;
 
+	}
+
+	private String breakDown(List<Object> parameter) {
+		String out = "";
+		Integer i = 0;
+		if (parameter != null) {
+			for (Object o : parameter) {
+				out += "Parameter(" + ++i + ") : " + o.toString() + "\n";
+			}
+		}
+		return out;
 	}
 
 	public ResultSet callSingleSP(Connection conn, String name, Object oneParameter) {

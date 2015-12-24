@@ -62,7 +62,8 @@ public class BSDateTimeUtil {
 	}
 
 	public static Calendar string2Calendar(String dateString, String format) {
-//		LOG.entering(BSDateTimeUtil.class.getName(), "string2Calendar", BSUtils.array2ObjectArray(dateString, format));
+		// LOG.entering(BSDateTimeUtil.class.getName(), "string2Calendar",
+		// BSUtils.array2ObjectArray(dateString, format));
 		DateFormat formatter = new SimpleDateFormat(format);
 		Calendar out = null;
 		try {
@@ -73,7 +74,8 @@ public class BSDateTimeUtil {
 			throw new BSProgrammerException(e);
 		}
 
-//		LOG.exiting(BSDateTimeUtil.class.getName(), "string2Calendar", BSDateTimeUtil.calendar2String(out));
+		// LOG.exiting(BSDateTimeUtil.class.getName(), "string2Calendar",
+		// BSDateTimeUtil.calendar2String(out));
 		return out;
 	}
 
@@ -115,10 +117,10 @@ public class BSDateTimeUtil {
 	}
 
 	public static String getFormatDatetime(HttpServletRequest request) {
-		BSmySQL mysql = new BSmySQL();
-		Connection conn = mysql.getConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		String out = getFormatDatetime(conn);
-		mysql.closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 		/*
 		 * String out = request.getServletContext().getInitParameter(
@@ -137,12 +139,10 @@ public class BSDateTimeUtil {
 
 	public static String getFormatDate(HttpServletRequest request) {
 		if (formatDate == null) {
-			BSHttpServlet servlet = new BSHttpServlet();
-			// BSmySQL mysql = new BSmySQL();
-			Connection conn = servlet.getConnection(request);
-			// Connection conn = mysql.getConnection(request);
+			BSConnectionFactory cf = new BSConnectionFactory();
+			Connection conn = cf.getConnection(request);
 			formatDate = getFormatDate(conn);
-			// mysql.closeConnection(conn);
+			cf.closeConnection(conn);
 		}
 		return formatDate;
 	}

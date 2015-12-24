@@ -213,24 +213,12 @@ public class BSDataUtils {
 		}
 	}
 
-	/**
-	 * <code>
-	 * 
-	 * @Deprecated public Connection getConnection(ServletContext context) {
-	 *             return getConnection(context, "cosoav"); }
-	 * @Deprecated public Connection getConnection(ServletContext context,
-	 *             String prefix) { String driverName =
-	 *             context.getInitParameter(prefix + ".database.driver"); String
-	 *             serverName = context.getInitParameter(prefix +
-	 *             ".database.server"); String database =
-	 *             context.getInitParameter(prefix + ".database.database");
-	 *             String username = context.getInitParameter(prefix +
-	 *             ".database.username"); String password =
-	 *             context.getInitParameter(prefix + ".database.password");
-	 *             return getConnection(driverName, serverName, database,
-	 *             password, username); } </code>
-	 */
-	public Connection getConnection2(ServletContext context) {
+	public Connection getConnection2() {
+		BSConnectionFactory cf = new BSConnectionFactory();
+		return cf.getConnection();
+
+		/**
+		 * <code>
 		String datasource = context.getInitParameter("bsframework.database.datasource");
 		LOG.log(Level.CONFIG, "Datasource for bsframework database is {0}", datasource);
 		String driverName = null;
@@ -250,8 +238,12 @@ public class BSDataUtils {
 			conn = getConnection2(datasource);
 		}
 		return conn;
+		</code>
+		 */
 	}
 
+	/**
+	 * <code>
 	private Connection getConnection(Map<String, DomainAttribute> domainAttribute) {
 		String driverName = domainAttribute.get("database.driver").getValue();
 		String serverName = domainAttribute.get("database.server").getValue();
@@ -261,19 +253,17 @@ public class BSDataUtils {
 
 		return getConnection(driverName, serverName, database, password, username);
 	}
-
-	@SuppressWarnings("unchecked")
+	</code>
+	 */
 	public Connection getConnection(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		Map<String, DomainAttribute> domainAttribute = null;
-		synchronized (session) {
-			domainAttribute = (Map<String, DomainAttribute>) session.getAttribute("DomainAttribute");
-		}
-
-		return getConnection2(domainAttribute);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		return cf.getConnection(request);
 	}
 
-	public Connection getConnection2(String dataSourceName) {
+	public Connection getConnection2(String dsName) {
+		BSConnectionFactory cf = new BSConnectionFactory();
+		return cf.getConnection(dsName);
+/**<code>		
 		Connection conn = null;
 
 		try {
@@ -292,8 +282,11 @@ public class BSDataUtils {
 		}
 
 		return conn;
+		</code>*/
 	}
 
+	/**
+	 * <code>
 	public Connection getConnection2(Map<String, DomainAttribute> domainAttribute) {
 		DomainAttribute dataSource = domainAttribute.get("database.datasource");
 		Connection conn = null;
@@ -306,7 +299,7 @@ public class BSDataUtils {
 		return conn;
 	}
 
-	public Connection getConnection(String driverName, String serverName, String database, String password, String username) {
+ 	public Connection getConnection(String driverName, String serverName, String database, String password, String username) {
 		Connection connection = null;
 		try {
 			Class.forName(driverName);
@@ -324,6 +317,8 @@ public class BSDataUtils {
 
 		return connection;
 	}
+	</code>
+	 */
 
 	public List<Object[]> resultSet2Matrix(ResultSet rs) {
 		return resultSet2Matrix(rs, false);

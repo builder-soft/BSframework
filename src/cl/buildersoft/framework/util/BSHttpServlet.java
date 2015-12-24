@@ -2,7 +2,6 @@ package cl.buildersoft.framework.util;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,13 +13,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import cl.buildersoft.framework.beans.User;
 import cl.buildersoft.framework.database.BSmySQL;
-import cl.buildersoft.framework.exception.BSDataBaseException;
 
 public class BSHttpServlet extends HttpServlet {
 	private static final Logger LOG = Logger.getLogger(BSHttpServlet.class.getName());
 	private static final long serialVersionUID = 7807647668104655759L;
 
 	protected Connection getConnection(HttpServletRequest request) {
+		BSConnectionFactory cf = new BSConnectionFactory();
+		
+		return cf.getConnection(request);
+		
+		/**<code>
 		Object connObject = request.getAttribute("Connection");
 		Connection out = null;
 		if (connObject == null) {
@@ -40,7 +43,8 @@ public class BSHttpServlet extends HttpServlet {
 				throw new BSDataBaseException(e);
 			}
 		}
-		return out;
+		return out;		
+		</code>*/
 	}
 
 	protected void closeConnection(Connection conn) {

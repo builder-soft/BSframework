@@ -60,11 +60,11 @@ public class BSHttpServlet extends HttpServlet {
 	}
 
 	protected void setSessionValue(HttpServletRequest request, String name, Object object) {
-		request.getSession().setAttribute(name, object);
+		request.getSession(false).setAttribute(name, object);
 	}
 
 	protected Object getSessionValue(HttpServletRequest request, String name) {
-		return request.getSession().getAttribute(name);
+		return request.getSession(false).getAttribute(name);
 	}
 
 	protected void forward(HttpServletRequest request, HttpServletResponse response, String uri) throws ServletException,
@@ -84,7 +84,7 @@ public class BSHttpServlet extends HttpServlet {
 	}
 
 	protected User getCurrentUser(HttpServletRequest request) {
-		return (User) request.getSession().getAttribute("User");
+		return (User) request.getSession(false).getAttribute("User");
 	}
 
 	protected void showParameters(HttpServletRequest request) {

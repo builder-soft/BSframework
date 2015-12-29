@@ -298,7 +298,7 @@ public class BSWeb {
 		if (option != null) {
 			List<Rol> rols = null;
 
-			HttpSession session = request.getSession();
+			HttpSession session = request.getSession(false);
 			synchronized (session) {
 				rols = (List<Rol>) session.getAttribute("Rol");
 			}

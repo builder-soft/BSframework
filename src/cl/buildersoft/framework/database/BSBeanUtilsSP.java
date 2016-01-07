@@ -1,5 +1,6 @@
 package cl.buildersoft.framework.database;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,6 +46,14 @@ public class BSBeanUtilsSP extends BSBeanUtils {
 			throw new BSDataBaseException(e);
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new BSDataBaseException(e);
+				}
+			}
 		}
 
 		return out;
@@ -75,6 +84,14 @@ public class BSBeanUtilsSP extends BSBeanUtils {
 			throw new BSDataBaseException(e);
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new BSDataBaseException(e);
+				}
+			}
 		}
 
 		return out;

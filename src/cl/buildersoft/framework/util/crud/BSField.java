@@ -10,16 +10,20 @@ public class BSField {
 	private String label = null;
 	private Boolean pk = null;
 	private Boolean unique = Boolean.TRUE;
-	private Boolean readonly = Boolean.FALSE;
 	private Integer length = null;
 	private BSDataType type = null;
 	private Object value = null;
 	private String validationOnBlur = null;
-	private Boolean visible = Boolean.TRUE;
+
 	private String[] fk = null;
 	private List<Object[]> fkData = null;
 	private String typeHtml = "text";
-	Boolean isNullable = false; // rs.getMetaData().isNullable(index);
+	private Boolean isNullable = false; // rs.getMetaData().isNullable(index);
+	private Boolean readonly = Boolean.FALSE;
+//	private Boolean visible = Boolean.TRUE;
+	
+	private Boolean showInTable = Boolean.TRUE;
+	private Boolean showInForm = Boolean.TRUE;
 
 	public BSField(String name, String label) {
 		super();
@@ -35,7 +39,7 @@ public class BSField {
 	}
 
 	public Boolean showField() {
-		Boolean out = !isPK() && isVisible();
+		Boolean out = !isPK() && getShowInForm();
 		return out;
 	}
 
@@ -45,7 +49,9 @@ public class BSField {
 		out = data != null;
 		return out;
 	}
-	/**<code>
+
+	/**
+	 * <code>
 	public Boolean isNumber() {
 		return getType().isNumber();
 		
@@ -57,7 +63,8 @@ public class BSField {
 	public Boolean isTime() {
 		return getType().equals(BSDataType.DATE) || getType().equals(BSDataTypeDef.TIMESTAMP);
 	}
-</code>*/
+</code>
+	 */
 	public String getName() {
 		return name;
 	}
@@ -137,7 +144,7 @@ public class BSField {
 	public void setValidationOnBlur(String validationOnBlur) {
 		this.validationOnBlur = validationOnBlur;
 	}
-
+/**<code>
 	public Boolean isVisible() {
 		return visible;
 	}
@@ -145,7 +152,7 @@ public class BSField {
 	public void setVisible(Boolean visible) {
 		this.visible = visible;
 	}
-
+</code> */
 	/***/
 	public String getFKDatabase() {
 		return fk != null ? fk[0] : null;
@@ -174,13 +181,7 @@ public class BSField {
 		this.fkData = fkData;
 	}
 
-	@Override
-	public String toString() {
-		return "BSField [name=" + name + ", label=" + label + ", pk=" + pk + ", unique=" + unique + ", readonly=" + readonly
-				+ ", length=" + length + ", type=" + type + ", value=" + value + ", validationOnBlur=" + validationOnBlur
-				+ ", visible=" + visible + ", fk=" + Arrays.toString(fk) + ", fkData=" + fkData + "]";
-	}
-
+	 
 	public String getTypeHtml() {
 		return typeHtml;
 	}
@@ -195,6 +196,30 @@ public class BSField {
 
 	public void setIsNullable(Boolean isNullable) {
 		this.isNullable = isNullable;
+	}
+
+	public Boolean getShowInTable() {
+		return showInTable;
+	}
+
+	public void setShowInTable(Boolean showInTable) {
+		this.showInTable = showInTable;
+	}
+
+	public Boolean getShowInForm() {
+		return showInForm;
+	}
+
+	public void setShowInForm(Boolean showInForm) {
+		this.showInForm = showInForm;
+	}
+
+	@Override
+	public String toString() {
+		return "BSField [name=" + name + ", label=" + label + ", pk=" + pk + ", unique=" + unique + ", length=" + length
+				+ ", type=" + type + ", value=" + value + ", validationOnBlur=" + validationOnBlur + ", fk="
+				+ Arrays.toString(fk) + ", fkData=" + fkData + ", typeHtml=" + typeHtml + ", isNullable=" + isNullable
+				+ ", readonly=" + readonly + ", showInTable=" + showInTable + ", showInForm=" + showInForm + "]";
 	}
 
 }

@@ -128,6 +128,10 @@ public class BSBeanUtils extends BSDataUtils {
 			throw new BSDataBaseException(e);
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			if (rs != null) {
+				(new BSmySQL()).closeSQL(rs);
+			}
 		}
 		return out;
 	}
@@ -166,6 +170,10 @@ public class BSBeanUtils extends BSDataUtils {
 			throw new BSDataBaseException(e);
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			if (rs != null) {
+				(new BSmySQL()).closeSQL(rs);
+			}
 		}
 		return out;
 	}
@@ -189,7 +197,7 @@ public class BSBeanUtils extends BSDataUtils {
 			fields = tableFields;
 		}
 
-		ResultSet rs;
+		ResultSet rs = null;
 		if (parameters == null || parameters.size() == 0) {
 			Long idValue = getIdValue(theClass, "get" + getIdField(objectFields), bean);
 			rs = queryResultSet(conn, sql, idValue);
@@ -209,6 +217,11 @@ public class BSBeanUtils extends BSDataUtils {
 			}
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
+		} finally {
+			if (rs != null) {
+				(new BSmySQL()).closeSQL(rs);
+			}
+			closeSQL();
 		}
 		return out;
 	}
@@ -316,7 +329,6 @@ public class BSBeanUtils extends BSDataUtils {
 	}
 
 	private String buildUpdateSQLString(Class<? extends BSBean> c, String[] tableFields, BSBean bean) {
-
 		String id = getIdField(tableFields);
 		tableFields = deleteId(tableFields);
 
@@ -356,7 +368,6 @@ public class BSBeanUtils extends BSDataUtils {
 
 	private Long getIdValue(Class<? extends BSBean> c, String idFieldName, BSBean bean) {
 		return (Long) getMethodValue(c, idFieldName, bean);
-
 	}
 
 	private Object[] getValues4Insert(Class<? extends BSBean> c, String[] tableFields, BSBean bean) {
@@ -501,9 +512,6 @@ public class BSBeanUtils extends BSDataUtils {
 		out = array2List(c.getDeclaredMethods());
 
 		if (!c.equals(Object.class)) {
-
-			// List<Method> parentMethods =
-			// array2List(c.getSuperclass().getDeclaredMethods());
 			List<Method> parentMethods = array2List(getMethods(c.getSuperclass()));
 
 			for (Method m : parentMethods) {

@@ -2,7 +2,6 @@ package cl.buildersoft.framework.database;
 
 import static cl.buildersoft.framework.util.BSUtils.array2List;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -125,12 +124,11 @@ public abstract class BSTableManager extends BSDataUtils {
 	}
 
 	private void fillObject(Class<? extends BSTableManager> c, String[] objectFields, Object[] params) {
-
-		Class objectClass = null;
+//		Class objectClass = null;
 		String fieldName = null;
 		Object value = null;
 		for (int i = 0; i < objectFields.length; i++) {
-			objectClass = params[i] == null ? null : params[i].getClass();
+//			objectClass = params[i] == null ? null : params[i].getClass();
 			fieldName = objectFields[i];
 			value = params[i];
 
@@ -142,6 +140,7 @@ public abstract class BSTableManager extends BSDataUtils {
 
 	private void fillField(Class<? extends BSTableManager> c, String fieldName, Object value) {
 		Class<?> type = getTypeMethod(c, fieldName);
+		@SuppressWarnings("rawtypes")
 		Class[] paramTypes = new Class[] { type };
 		Method method;
 		try {
@@ -247,7 +246,6 @@ public abstract class BSTableManager extends BSDataUtils {
 	}
 
 	private Object[] getValues4Insert(Class<? extends BSTableManager> c, String[] tableFields) {
-
 		Object[] out = new Object[tableFields.length];
 		Method method = null;
 		int i = 0;

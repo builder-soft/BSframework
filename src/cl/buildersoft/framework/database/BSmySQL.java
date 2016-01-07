@@ -20,22 +20,18 @@ import cl.buildersoft.framework.util.crud.BSPaging;
 import cl.buildersoft.framework.util.crud.BSTableConfig;
 
 public class BSmySQL extends BSDataUtils {
-	CallableStatement callableStatement;
+	// CallableStatement callableStatement;
 
 	private final static Logger LOG = Logger.getLogger(BSmySQL.class.getName());
 
-	@Override
-	public void closeSQL() {
-		if (this.callableStatement != null) {
-			try {
-				this.callableStatement.close();
-			} catch (SQLException e) {
-				throw new BSDataBaseException(e);
-			}
-		}
-		super.closeSQL();
-	}
-
+	/**
+	 * <code>
+	 * 
+	 * @Override public void closeSQL() { if (this.callableStatement != null) {
+	 *           try { this.callableStatement.close(); } catch (SQLException e)
+	 *           { throw new BSDataBaseException(e); } } super.closeSQL(); }
+	 *           </code>
+	 */
 	public ResultSet queryResultSet(Connection conn, BSTableConfig table, BSPaging paging) {
 		String sql = paging.getSQL(table);
 		List<Object> prms = paging.getParams();
@@ -57,9 +53,10 @@ public class BSmySQL extends BSDataUtils {
 		String sqlStatement = getSQL4SP(name, parameter);
 
 		List<List<Object[]>> out = new ArrayList<List<Object[]>>();
-
+		CallableStatement callableStatement = null;
+		ResultSet rs = null;
 		try {
-			this.callableStatement = conn.prepareCall(sqlStatement);
+			callableStatement = conn.prepareCall(sqlStatement);
 			parametersToStatement(parameter, callableStatement);
 
 			// this.callableStatement.execute();
@@ -67,34 +64,63 @@ public class BSmySQL extends BSDataUtils {
 
 			Boolean moreResults = Boolean.TRUE;
 
-			Boolean isResultSet = this.callableStatement.execute();
+			Boolean isResultSet = callableStatement.execute();
 
-			ResultSet rs = this.callableStatement.getResultSet();
+			rs = callableStatement.getResultSet();
 			// out.add(rs);
 			// out.add(resultSet2Matrix(rs));
 
 			while (moreResults) {
 				if (isResultSet) {
-					rs = this.callableStatement.getResultSet();
+					rs = callableStatement.getResultSet();
 					// out.add(rs);
 					out.add(resultSet2Matrix(rs, includeColumns));
 					rs.close();
 				} else {
-					Integer rowsAffected = this.callableStatement.getUpdateCount();
+					Integer rowsAffected = callableStatement.getUpdateCount();
 					if (rowsAffected == -1) {
 						moreResults = Boolean.FALSE;
 					}
 				}
 				if (moreResults) {
-					isResultSet = this.callableStatement.getMoreResults();
+					isResultSet = callableStatement.getMoreResults();
 				}
 			}
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "Error reading ResultSet in callComplexSP", e);
+			LOG.log(Level.SEVERE, "Error executing query in callComplexSP, the commans name is '" + name + "', parameters are "
+					+ breakDown(parameter), e);
 			throw new BSDataBaseException(e);
+		} finally {
+			if (callableStatement != null) {
+				try {
+					callableStatement.close();
+				} catch (SQLException e) {
+					throw new BSDataBaseException(e);
+				}
+			}
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new BSDataBaseException(e);
+				}
+			}
+
 		}
 		return out;
 
+	}
+
+	private String breakDown(List<Object> parameter) {
+		String out = "";
+		Integer i = 0;
+		if (parameter != null) {
+			for (Object o : parameter) {
+				out += "Parameter(" + ++i + ") : " + o.toString() + "\n";
+			}
+		}
+		return out;
 	}
 
 	public ResultSet callSingleSP(Connection conn, String name, Object oneParameter) {
@@ -113,31 +139,28 @@ public class BSmySQL extends BSDataUtils {
 	public String callFunction(Connection conn, String name, List<Object> parameter) {
 		String sql = "{ ? = call " + name + " (" + getQuestionMarks(parameter) + ")}";
 		String out = null;
+		CallableStatement callableStatement = null;
 		try {
-			this.callableStatement = conn.prepareCall(sql);
-			this.callableStatement.registerOutParameter(1, Types.OTHER);
-			parametersToStatement(parameter, this.callableStatement, 1);
+			callableStatement = conn.prepareCall(sql);
+			callableStatement.registerOutParameter(1, Types.OTHER);
+			parametersToStatement(parameter, callableStatement, 1);
 
-			this.callableStatement.execute();
+			callableStatement.execute();
 
-			out = this.callableStatement.getString(1);
+			out = callableStatement.getString(1);
 
 		} catch (SQLException e) {
 			LOG.log(Level.SEVERE, "Error executing function en callFunction", e);
 			throw new BSDataBaseException(e);
+		} finally {
+			if (callableStatement != null) {
+				try {
+					callableStatement.close();
+				} catch (SQLException e) {
+					throw new BSDataBaseException(e);
+				}
+			}
 		}
-
-		/*
-		 * or even "{? = function_1 (?, ?, ?, ?, ?)}"
-		 * 
-		 * and I have the following code:
-		 * 
-		 * CallableStatement cs = conn.prepareCall(sql);
-		 * cs.registerOutParameter(1, Types.BIGINT);
-		 * 
-		 * cs.setLong(2,long1); cs.setString(3,string1);
-		 * cs.setString(4,string2); cs.setString(5,string3); cs.setInt(6,int1);
-		 */
 
 		return out;
 	}
@@ -146,26 +169,26 @@ public class BSmySQL extends BSDataUtils {
 		String sqlStatement = getSQL4SP(name, parameter);
 
 		ResultSet out = null;
-
+		CallableStatement callableStatement = null;
 		try {
-			this.callableStatement = conn.prepareCall(sqlStatement);
+			callableStatement = conn.prepareCall(sqlStatement);
 			parametersToStatement(parameter, callableStatement);
 
 			Boolean moreResults = Boolean.TRUE;
-			Boolean isResultSet = this.callableStatement.execute();
+			Boolean isResultSet = callableStatement.execute();
 
 			while (moreResults) {
 				if (isResultSet) {
-					out = this.callableStatement.getResultSet();
+					out = callableStatement.getResultSet();
 					moreResults = Boolean.FALSE;
 				} else {
-					Integer rowsAffected = this.callableStatement.getUpdateCount();
+					Integer rowsAffected = callableStatement.getUpdateCount();
 					if (rowsAffected == -1) {
 						moreResults = Boolean.FALSE;
 					}
 				}
 				if (moreResults) {
-					isResultSet = this.callableStatement.getMoreResults();
+					isResultSet = callableStatement.getMoreResults();
 				}
 			}
 		} catch (SQLException e) {

@@ -50,7 +50,7 @@ public class BSUtils {
 		for (BSField f : fields) {
 			out += f.getName() + c;
 		}
-		out = out.substring(0, out.length() - c.length());
+		out = out.substring(0, out.length() - 1);
 		return out;
 	}
 
@@ -72,4 +72,6 @@ public class BSUtils {
 		out = out.substring(0, out.length() - 1);
 		return out;
 	}
+
+	
 }

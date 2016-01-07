@@ -398,13 +398,13 @@ public class BSTableConfig {
 	}
 
 	private void setRealType(ResultSetMetaData metaData, Integer i, BSField field) {
-	 
+
 		String typeName;
 		try {
 			LOG.log(Level.FINE, "{0} - {1}",
 					BSUtils.array2ObjectArray(metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
 			typeName = metaData.getColumnTypeName(i);
-		 
+
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
@@ -602,6 +602,7 @@ public class BSTableConfig {
 	public BSField getField(String name) {
 		BSField out = this.fieldsMap.get(name);
 		if (out == null) {
+			LOG.log(Level.SEVERE, "Field {0} not found, the fields list is {1}", BSUtils.array2ObjectArray(name, this.fieldsMap));
 			throw new BSProgrammerException("Field '" + name + "' not found");
 		}
 		return out;

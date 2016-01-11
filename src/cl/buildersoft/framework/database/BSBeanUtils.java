@@ -129,9 +129,8 @@ public class BSBeanUtils extends BSDataUtils {
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
 		} finally {
-			if (rs != null) {
-				(new BSmySQL()).closeSQL(rs);
-			}
+			closeSQL(rs);
+			closeSQL();
 		}
 		return out;
 	}
@@ -171,9 +170,8 @@ public class BSBeanUtils extends BSDataUtils {
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
 		} finally {
-			if (rs != null) {
-				(new BSmySQL()).closeSQL(rs);
-			}
+			closeSQL(rs);
+			closeSQL();
 		}
 		return out;
 	}
@@ -218,9 +216,7 @@ public class BSBeanUtils extends BSDataUtils {
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		} finally {
-			if (rs != null) {
-				(new BSmySQL()).closeSQL(rs);
-			}
+			closeSQL(rs);
 			closeSQL();
 		}
 		return out;
@@ -401,7 +397,7 @@ public class BSBeanUtils extends BSDataUtils {
 		Object aux = null;
 		Object value = null;
 		String methodName = "";
-		// Method method = null;
+
 		int i = 0;
 		for (String name : objectFields) {
 			methodName = "get" + name;
@@ -419,8 +415,8 @@ public class BSBeanUtils extends BSDataUtils {
 	}
 
 	private Object getMethodValue(Class<? extends BSBean> c, String methodName, BSBean bean) {
-		Object value;
-		Method method;
+		Object value = null;
+		Method method = null;
 		try {
 			method = c.getMethod(methodName, null);
 			value = method.invoke(bean, null);
@@ -545,10 +541,10 @@ public class BSBeanUtils extends BSDataUtils {
 		return out;
 	}
 
-	public Method getMethod(Class<?> clazz, String name) {
+	public Method getMethod(Class<?> javaClass, String name) {
 		Method m;
 		try {
-			m = clazz.getDeclaredMethod(name);
+			m = javaClass.getDeclaredMethod(name);
 		} catch (SecurityException e) {
 			throw new BSProgrammerException(e);
 		} catch (NoSuchMethodException e) {
@@ -556,10 +552,10 @@ public class BSBeanUtils extends BSDataUtils {
 		}
 
 		if (m == null) {
-			if (clazz.equals(Object.class)) {
+			if (javaClass.equals(Object.class)) {
 				throw new BSProgrammerException("Method not found in any super class.");
 			}
-			return getMethod(clazz.getSuperclass(), name);
+			return getMethod(javaClass.getSuperclass(), name);
 		}
 		return m;
 	}

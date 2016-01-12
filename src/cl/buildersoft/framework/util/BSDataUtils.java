@@ -2,7 +2,6 @@ package cl.buildersoft.framework.util;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -10,20 +9,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
-import cl.buildersoft.framework.beans.DomainAttribute;
-import cl.buildersoft.framework.exception.BSConfigurationException;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 
 public class BSDataUtils {
@@ -85,28 +75,24 @@ public class BSDataUtils {
 	public Long insert(Connection conn, String sql, List<Object> parameter) {
 		Long newKey = 0L;
 		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
 		try {
 			preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			parametersToStatement(parameter, preparedStatement);
 			newKey = (long) preparedStatement.executeUpdate();
 
-			ResultSet rs = preparedStatement.getGeneratedKeys();
+			rs = preparedStatement.getGeneratedKeys();
 			if (rs.next()) {
 				newKey = rs.getLong(1);
 			}
 
-			closeSQL(rs);
 			// rs.close();
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		} finally {
-			if (preparedStatement != null) {
-				try {
-					preparedStatement.close();
-				} catch (SQLException e) {
-					throw new BSDataBaseException(e);
-				}
-			}
+			closeSQL(rs);
+			closeSQL();
+
 		}
 
 		return newKey;
@@ -263,7 +249,8 @@ public class BSDataUtils {
 	public Connection getConnection2(String dsName) {
 		BSConnectionFactory cf = new BSConnectionFactory();
 		return cf.getConnection(dsName);
-/**<code>		
+		/**
+		 * <code>		
 		Connection conn = null;
 
 		try {
@@ -282,7 +269,8 @@ public class BSDataUtils {
 		}
 
 		return conn;
-		</code>*/
+		</code>
+		 */
 	}
 
 	/**

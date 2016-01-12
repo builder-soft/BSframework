@@ -129,9 +129,8 @@ public class BSBeanUtils extends BSDataUtils {
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
 		} finally {
-			if (rs != null) {
-				(new BSmySQL()).closeSQL(rs);
-			}
+			closeSQL(rs);
+			closeSQL();
 		}
 		return out;
 	}
@@ -171,9 +170,8 @@ public class BSBeanUtils extends BSDataUtils {
 		} catch (IllegalAccessException e) {
 			throw new BSDataBaseException(e);
 		} finally {
-			if (rs != null) {
-				(new BSmySQL()).closeSQL(rs);
-			}
+			closeSQL(rs);
+			closeSQL();
 		}
 		return out;
 	}
@@ -218,9 +216,7 @@ public class BSBeanUtils extends BSDataUtils {
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		} finally {
-			if (rs != null) {
-				(new BSmySQL()).closeSQL(rs);
-			}
+			closeSQL(rs);
 			closeSQL();
 		}
 		return out;

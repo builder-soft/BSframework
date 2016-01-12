@@ -20,7 +20,7 @@ import cl.buildersoft.framework.util.crud.BSPaging;
 import cl.buildersoft.framework.util.crud.BSTableConfig;
 
 public class BSmySQL extends BSDataUtils {
-	// CallableStatement callableStatement;
+	CallableStatement callableStatement;
 
 	private final static Logger LOG = Logger.getLogger(BSmySQL.class.getName());
 
@@ -53,37 +53,37 @@ public class BSmySQL extends BSDataUtils {
 		String sqlStatement = getSQL4SP(name, parameter);
 
 		List<List<Object[]>> out = new ArrayList<List<Object[]>>();
-		CallableStatement callableStatement = null;
+		CallableStatement localCallableStatement = null;
 		ResultSet rs = null;
 		try {
-			callableStatement = conn.prepareCall(sqlStatement);
-			parametersToStatement(parameter, callableStatement);
+			localCallableStatement = conn.prepareCall(sqlStatement);
+			parametersToStatement(parameter, localCallableStatement);
 
 			// this.callableStatement.execute();
 			// this.callableStatement = conn.prepareCall(sqlStatement);
 
 			Boolean moreResults = Boolean.TRUE;
 
-			Boolean isResultSet = callableStatement.execute();
+			Boolean isResultSet = localCallableStatement.execute();
 
-			rs = callableStatement.getResultSet();
+			rs = localCallableStatement.getResultSet();
 			// out.add(rs);
 			// out.add(resultSet2Matrix(rs));
 
 			while (moreResults) {
 				if (isResultSet) {
-					rs = callableStatement.getResultSet();
+					rs = localCallableStatement.getResultSet();
 					// out.add(rs);
 					out.add(resultSet2Matrix(rs, includeColumns));
 					rs.close();
 				} else {
-					Integer rowsAffected = callableStatement.getUpdateCount();
+					Integer rowsAffected = localCallableStatement.getUpdateCount();
 					if (rowsAffected == -1) {
 						moreResults = Boolean.FALSE;
 					}
 				}
 				if (moreResults) {
-					isResultSet = callableStatement.getMoreResults();
+					isResultSet = localCallableStatement.getMoreResults();
 				}
 			}
 		} catch (SQLException e) {
@@ -91,9 +91,9 @@ public class BSmySQL extends BSDataUtils {
 					+ breakDown(parameter), e);
 			throw new BSDataBaseException(e);
 		} finally {
-			if (callableStatement != null) {
+			if (localCallableStatement != null) {
 				try {
-					callableStatement.close();
+					localCallableStatement.close();
 				} catch (SQLException e) {
 					throw new BSDataBaseException(e);
 				}
@@ -139,23 +139,23 @@ public class BSmySQL extends BSDataUtils {
 	public String callFunction(Connection conn, String name, List<Object> parameter) {
 		String sql = "{ ? = call " + name + " (" + getQuestionMarks(parameter) + ")}";
 		String out = null;
-		CallableStatement callableStatement = null;
+		CallableStatement localCallableStatement = null;
 		try {
-			callableStatement = conn.prepareCall(sql);
-			callableStatement.registerOutParameter(1, Types.OTHER);
-			parametersToStatement(parameter, callableStatement, 1);
+			localCallableStatement = conn.prepareCall(sql);
+			localCallableStatement.registerOutParameter(1, Types.OTHER);
+			parametersToStatement(parameter, localCallableStatement, 1);
 
-			callableStatement.execute();
+			localCallableStatement.execute();
 
-			out = callableStatement.getString(1);
+			out = localCallableStatement.getString(1);
 
 		} catch (SQLException e) {
 			LOG.log(Level.SEVERE, "Error executing function en callFunction", e);
 			throw new BSDataBaseException(e);
 		} finally {
-			if (callableStatement != null) {
+			if (localCallableStatement != null) {
 				try {
-					callableStatement.close();
+					localCallableStatement.close();
 				} catch (SQLException e) {
 					throw new BSDataBaseException(e);
 				}
@@ -169,7 +169,7 @@ public class BSmySQL extends BSDataUtils {
 		String sqlStatement = getSQL4SP(name, parameter);
 
 		ResultSet out = null;
-		CallableStatement callableStatement = null;
+		// callableStatement = null;
 		try {
 			callableStatement = conn.prepareCall(sqlStatement);
 			parametersToStatement(parameter, callableStatement);
@@ -301,5 +301,17 @@ public class BSmySQL extends BSDataUtils {
 		this.closeSQL(rs);
 
 		return out;
+	}
+
+	public void closeSQL() {
+		super.closeSQL();
+		if (this.callableStatement != null) {
+			try {
+				this.callableStatement.close();
+				this.callableStatement = null;
+			} catch (SQLException e) {
+				throw new BSDataBaseException(e);
+			}
+		}
 	}
 }

@@ -397,7 +397,7 @@ public class BSBeanUtils extends BSDataUtils {
 		Object aux = null;
 		Object value = null;
 		String methodName = "";
-
+		// Method method = null;
 		int i = 0;
 		for (String name : objectFields) {
 			methodName = "get" + name;
@@ -415,8 +415,8 @@ public class BSBeanUtils extends BSDataUtils {
 	}
 
 	private Object getMethodValue(Class<? extends BSBean> c, String methodName, BSBean bean) {
-		Object value = null;
-		Method method = null;
+		Object value;
+		Method method;
 		try {
 			method = c.getMethod(methodName, null);
 			value = method.invoke(bean, null);
@@ -541,10 +541,10 @@ public class BSBeanUtils extends BSDataUtils {
 		return out;
 	}
 
-	public Method getMethod(Class<?> javaClass, String name) {
+	public Method getMethod(Class<?> clazz, String name) {
 		Method m;
 		try {
-			m = javaClass.getDeclaredMethod(name);
+			m = clazz.getDeclaredMethod(name);
 		} catch (SecurityException e) {
 			throw new BSProgrammerException(e);
 		} catch (NoSuchMethodException e) {
@@ -552,10 +552,10 @@ public class BSBeanUtils extends BSDataUtils {
 		}
 
 		if (m == null) {
-			if (javaClass.equals(Object.class)) {
+			if (clazz.equals(Object.class)) {
 				throw new BSProgrammerException("Method not found in any super class.");
 			}
-			return getMethod(javaClass.getSuperclass(), name);
+			return getMethod(clazz.getSuperclass(), name);
 		}
 		return m;
 	}

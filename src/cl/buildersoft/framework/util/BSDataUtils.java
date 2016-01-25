@@ -56,6 +56,7 @@ public class BSDataUtils {
 			parametersToStatement(parameter, preparedStatement);
 			rowsAffected = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
+			LOG.log(Level.SEVERE, "SQL was: {0} and parameters were {1}", BSUtils.array2ObjectArray(sql, parameter));
 			throw new BSDataBaseException(e);
 		} finally {
 			if (preparedStatement != null) {

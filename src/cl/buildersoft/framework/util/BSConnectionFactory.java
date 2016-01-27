@@ -82,7 +82,6 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 			domain = (Domain) session.getAttribute("Domain");
 		}
 	 
-
 		return getConnectionByDataSource(domain.getDatabase());
 	}
 

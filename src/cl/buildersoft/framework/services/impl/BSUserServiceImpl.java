@@ -13,6 +13,7 @@ import cl.buildersoft.framework.beans.User;
 import cl.buildersoft.framework.database.BSBeanUtils;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.services.BSUserService;
+import cl.buildersoft.framework.util.BSConnectionFactory;
 import cl.buildersoft.framework.util.BSDataUtils;
 
 public class BSUserServiceImpl extends BSDataUtils implements BSUserService {
@@ -60,4 +61,35 @@ public class BSUserServiceImpl extends BSDataUtils implements BSUserService {
 		}
 		return out;
 	}
+
+	@Override
+	public User search(Connection conn, String mail) {
+		BSBeanUtils bu = new BSBeanUtils();
+		User user = new User();
+
+		if (!bu.search(conn, user, "cMail=?", mail)) {
+			user = null;
+		}
+
+		return user;
+	}
+
+	@Override
+	public User getSystemUser() {
+		return getSpecificUser("SYSTEM");
+	}
+
+	@Override
+	public User getAnonymousUser() {
+		return getSpecificUser("ANONYMOUS");
+	}
+
+	private User getSpecificUser(String mail) {
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection();
+		User out = search(conn, "SYSTEM");
+		cf.closeConnection(conn);
+		return out;
+	}
+
 }

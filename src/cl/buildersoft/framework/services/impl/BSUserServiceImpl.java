@@ -87,7 +87,7 @@ public class BSUserServiceImpl extends BSDataUtils implements BSUserService {
 	private User getSpecificUser(String mail) {
 		BSConnectionFactory cf = new BSConnectionFactory();
 		Connection conn = cf.getConnection();
-		User out = search(conn, "SYSTEM");
+		User out = search(conn, mail);
 		cf.closeConnection(conn);
 		return out;
 	}

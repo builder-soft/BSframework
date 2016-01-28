@@ -314,7 +314,7 @@ public abstract class BSTableManager extends BSDataUtils {
 		return value;
 	}
 
-	private String getCommas(String[] tableFields) {
+	public String getCommas(String[] tableFields) {
 		String out = "";
 		for (int i = 0; i < tableFields.length; i++) {
 			out += "?,";

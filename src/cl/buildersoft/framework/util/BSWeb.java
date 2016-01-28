@@ -1,6 +1,9 @@
 package cl.buildersoft.framework.util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import sun.misc.BASE64Encoder;
 import cl.buildersoft.framework.beans.Option;
 import cl.buildersoft.framework.beans.Rol;
+import cl.buildersoft.framework.beans.User;
 import cl.buildersoft.framework.dataType.BSDataType;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.database.BSmySQL;
@@ -422,4 +426,11 @@ public class BSWeb {
 		// out = Base64.encode(out.getBytes());
 		return out;
 	}
+
+	static public String getGrabatar(User user) {
+		BSSecurity s = new BSSecurity();
+		String url = "http://www.gravatar.com/avatar/" + s.md5(user.getMail()) + "?s=25";
+		return url;
+	}
+
 }

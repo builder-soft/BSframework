@@ -3,6 +3,7 @@ package cl.buildersoft.framework.services;
 import java.sql.Connection;
 import java.util.List;
 
+import cl.buildersoft.framework.beans.Domain;
 import cl.buildersoft.framework.beans.Rol;
 import cl.buildersoft.framework.beans.User;
 
@@ -16,5 +17,5 @@ public interface BSUserService {
 	public User getSystemUser();
 
 	public User getAnonymousUser();
-
+	public List<User> listUsersByDomain(Domain currentDomain);
 }

@@ -39,10 +39,6 @@ public class BSTableConfig {
 	private String saveSP = null;
 	private String deleteSP = null;
 
-	private String eventKey = null;
-	private String eventWhat = null;
-	private String[] eventParams = null;
-
 	public BSTableConfig(String database) {
 		this.database = database;
 	}
@@ -707,21 +703,4 @@ public class BSTableConfig {
 		return out;
 	}
 
-	public void serEventInfo(String eventKey, String eventWhat, String[] eventParams) {
-		this.eventKey = eventKey;
-		this.eventWhat = eventWhat;
-		this.eventParams = eventParams;
-	}
-
-	public String getEventKey() {
-		return eventKey;
-	}
-
-	public String getEventWhat() {
-		return eventWhat;
-	}
-
-	public String[] getEventParams() {
-		return eventParams;
-	}
 }

@@ -98,7 +98,7 @@ public class BSUserServiceImpl extends BSDataUtils implements BSUserService {
 	public List<User> listUsersByDomain(Domain currentDomain) {
 		// select a.cId, a.cMail, a.cName, a.cAdmin from tuser as a left join
 		// tr_userdomain as b on a.cId = b.cUser where b.cDomain=1;
-		String sql = "SELECT a.cId, a.cMail, a.cName, a.cAdmin, a.cPassword FROM tUser AS a LEFT JOIN tR_UserDomain AS b ON a.cId = b.cUser WHERE b.cDomain=? UNION SELECT a.cId, a.cMail, a.cName, a.cAdmin, a.cPassword FROM tUser AS a WHERE cMail = 'SYSTEM' OR cMail = 'ANONYMOUS';";
+		String sql = "SELECT a.cId, a.cMail, a.cName, a.cAdmin, a.cPassword FROM tUser AS a LEFT JOIN tR_UserDomain AS b ON a.cId = b.cUser WHERE b.cDomain=? UNION SELECT a.cId, a.cMail, a.cName, a.cAdmin, a.cPassword FROM tUser AS a WHERE cMail = 'SYSTEM' OR cMail = 'ANONYMOUS' ORDER BY cName;";
 		List<User> out = new ArrayList<User>();
 		BSConnectionFactory cf = new BSConnectionFactory();
 		User user = null;

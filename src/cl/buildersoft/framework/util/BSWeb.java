@@ -1,9 +1,6 @@
 package cl.buildersoft.framework.util;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -427,7 +424,7 @@ public class BSWeb {
 		return out;
 	}
 
-	static public String getGrabatar(User user) {
+	static public String getGravatar(User user) {
 		BSSecurity s = new BSSecurity();
 		String url = "http://www.gravatar.com/avatar/" + s.md5(user.getMail()) + "?s=25";
 		return url;

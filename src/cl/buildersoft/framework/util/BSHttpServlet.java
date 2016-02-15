@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cl.buildersoft.framework.beans.Domain;
 import cl.buildersoft.framework.beans.User;
 import cl.buildersoft.framework.database.BSmySQL;
 
@@ -20,31 +21,7 @@ public class BSHttpServlet extends HttpServlet {
 
 	protected Connection getConnection(HttpServletRequest request) {
 		BSConnectionFactory cf = new BSConnectionFactory();
-		
 		return cf.getConnection(request);
-		
-		/**<code>
-		Object connObject = request.getAttribute("Connection");
-		Connection out = null;
-		if (connObject == null) {
-			BSmySQL mysql = new BSmySQL();
-			out = mysql.getConnection(request);
-			request.setAttribute("Connection", out);
-
-		} else {
-			out = (Connection) connObject;
-			try {
-				if (out.isClosed()) {
-					request.setAttribute("Connection", null);
-					out = getConnection(request);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				throw new BSDataBaseException(e);
-			}
-		}
-		return out;		
-		</code>*/
 	}
 
 	protected void closeConnection(Connection conn) {
@@ -85,6 +62,10 @@ public class BSHttpServlet extends HttpServlet {
 
 	protected User getCurrentUser(HttpServletRequest request) {
 		return (User) request.getSession(false).getAttribute("User");
+	}
+	
+	protected Domain getCurrentDomain(HttpServletRequest request) {
+		return (Domain) request.getSession(false).getAttribute("Domain");
 	}
 
 	protected void showParameters(HttpServletRequest request) {

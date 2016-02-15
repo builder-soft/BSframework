@@ -681,4 +681,26 @@ public class BSTableConfig {
 		this.script = script;
 	}
 
+	public BSField[] getNotReadonly(BSField[] fields) {
+		BSField[] out = new BSField[countReadonly(fields)];
+		Integer index = 0;
+
+		for (BSField field : fields) {
+			if (!field.isReadonly()) {
+				out[index++] = field;
+			}
+		}
+		return out;
+	}
+
+	private Integer countReadonly(BSField[] fields) {
+		Integer out = 0;
+		for (BSField field : fields) {
+			if (!field.isReadonly()) {
+				out++;
+			}
+		}
+		return out;
+	}
+
 }

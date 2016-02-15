@@ -7,6 +7,7 @@ import cl.buildersoft.framework.dataType.BSDataTypeAbstract;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 
 public class BSInteger extends BSDataTypeAbstract implements BSDataType {
+	private static final String PATTERN_INTEGER = "PATTERN_INTEGER";
 
 	@Override
 	public String format(Connection conn, Object data) {
@@ -16,7 +17,8 @@ public class BSInteger extends BSDataTypeAbstract implements BSDataType {
 	@Override
 	public Boolean validData(Connection conn, String data) {
 		try {
-			Integer.parseInt(data);
+			// BSWeb.formatInteger(conn, data);
+			parseNumber(conn, data, PATTERN_INTEGER, Integer.class);
 			return true;
 		} catch (NumberFormatException e) {
 			return false;
@@ -25,11 +27,12 @@ public class BSInteger extends BSDataTypeAbstract implements BSDataType {
 
 	@Override
 	public Object parse(Connection conn, String data) {
-		return Integer.parseInt(data);
+		return (Integer) parseNumber(conn, data, PATTERN_INTEGER, Integer.class);
 	}
 
 	@Override
 	public BSDataTypeEnum getDataTypeEnum() {
 		return BSDataTypeEnum.INTEGER;
 	}
+
 }

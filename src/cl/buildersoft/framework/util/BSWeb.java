@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import sun.misc.BASE64Encoder;
 import cl.buildersoft.framework.beans.Option;
 import cl.buildersoft.framework.beans.Rol;
+import cl.buildersoft.framework.beans.User;
 import cl.buildersoft.framework.dataType.BSDataType;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.database.BSmySQL;
@@ -109,11 +110,6 @@ public class BSWeb {
 
 	/********************/
 
-	private static Connection requestToConnection(HttpServletRequest request) {
-		BSmySQL mysql = new BSmySQL();
-		return mysql.getConnection(request);
-	}
-
 	private static String getConfig(Connection conn, String key) {
 		BSConfig config = new BSConfig();
 		return config.getString(conn, key);
@@ -124,9 +120,10 @@ public class BSWeb {
 	}
 
 	public static String getLocale(HttpServletRequest request) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		String out = getLocale(conn);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 	}
 
@@ -135,16 +132,18 @@ public class BSWeb {
 	}
 
 	public static String formatDouble(HttpServletRequest request, Double value) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		String out = formatDouble(conn, value);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 	}
 
 	public static String formatLong(HttpServletRequest request, Long value) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		String out = formatLong(conn, value);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 	}
 
@@ -153,9 +152,10 @@ public class BSWeb {
 	}
 
 	public static String formatInteger(HttpServletRequest request, Integer value) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		String out = formatInteger(conn, value);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 	}
 
@@ -164,9 +164,10 @@ public class BSWeb {
 	}
 
 	public static String formatNumber(HttpServletRequest request, Object value, String pattern) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		String out = formatNumber(conn, value, pattern);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 	}
 
@@ -222,9 +223,10 @@ public class BSWeb {
 	}
 
 	public static Double parseDouble(HttpServletRequest request, String value) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		Double out = parseDouble(conn, value);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 	}
 
@@ -233,9 +235,10 @@ public class BSWeb {
 	}
 
 	public static Integer parseInteger(HttpServletRequest request, String value) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		Integer out = parseInteger(conn, value);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 
 	}
@@ -245,9 +248,10 @@ public class BSWeb {
 	}
 
 	public static Long parseLong(HttpServletRequest request, String value) {
-		Connection conn = requestToConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = cf.getConnection(request);
 		Long out = parseLong(conn, value);
-		new BSmySQL().closeConnection(conn);
+		cf.closeConnection(conn);
 		return out;
 	}
 
@@ -412,11 +416,24 @@ public class BSWeb {
 	static public String randomString() {
 		long l = System.currentTimeMillis();
 		String out = String.valueOf(l);
-		
+
 		BASE64Encoder base64encoder = new BASE64Encoder();
 		out = base64encoder.encode(out.getBytes());
-		
-//		out = Base64.encode(out.getBytes());
+
+		// out = Base64.encode(out.getBytes());
 		return out;
 	}
+
+	static public String getGravatar(User user) {
+		String url = "http://www.gravatar.com/avatar/";
+		if (user != null) {
+			BSSecurity s = new BSSecurity();
+			url += s.md5(user.getMail());
+		} else {
+			url += "nothing";
+		}
+		url += "?s=25";
+		return url;
+	}
+
 }

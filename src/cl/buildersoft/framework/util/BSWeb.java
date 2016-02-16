@@ -425,8 +425,14 @@ public class BSWeb {
 	}
 
 	static public String getGravatar(User user) {
-		BSSecurity s = new BSSecurity();
-		String url = "http://www.gravatar.com/avatar/" + s.md5(user.getMail()) + "?s=25";
+		String url = "http://www.gravatar.com/avatar/";
+		if (user != null) {
+			BSSecurity s = new BSSecurity();
+			url += s.md5(user.getMail());
+		} else {
+			url += "nothing";
+		}
+		url += "?s=25";
 		return url;
 	}
 

@@ -74,21 +74,20 @@ public class BSDataUtils {
 	public Long insert(Connection conn, String sql, List<Object> parameter) {
 		Long newKey = 0L;
 		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
 		try {
 			preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			parametersToStatement(parameter, preparedStatement);
 			newKey = (long) preparedStatement.executeUpdate();
 
-			ResultSet rs = preparedStatement.getGeneratedKeys();
+			rs = preparedStatement.getGeneratedKeys();
 			if (rs.next()) {
 				newKey = rs.getLong(1);
 			}
-
-			closeSQL(rs);
-			// rs.close();
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		} finally {
+			closeSQL(rs);
 			if (preparedStatement != null) {
 				try {
 					preparedStatement.close();

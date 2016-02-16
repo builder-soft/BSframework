@@ -71,8 +71,16 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 	}
 
 	public Connection getConnection(String dsName) {
-		String[] params = getConnectionParameters(dsName);
-		return getConnectionJDBC(params[0], params[1], params[2], params[3]);
+		Connection out = null;
+		try {
+			out = getConnectionByDataSource(dsName);
+		} catch (RuntimeException e) {
+			// if (e.getCause() instanceof NoInitialContextException) {
+			String[] params = getConnectionParameters(dsName);
+			out = getConnectionJDBC(params[0], params[1], params[2], params[3]);
+			// }
+		}
+		return out;
 	}
 
 	public Connection getConnection(HttpServletRequest request) {
@@ -81,12 +89,12 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 		synchronized (session) {
 			domain = (Domain) session.getAttribute("Domain");
 		}
-	 
+
 		return getConnectionByDataSource(domain.getDatabase());
 	}
 
 	public Connection getConnection() {
-		return getConnectionByDataSource("bsframework");
+		return getConnection("bsframework");
 	}
 
 	private Connection getConnectionJDBC(String driverName, String url, String username, String password) {
@@ -123,8 +131,9 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 			throw new BSConfigurationException(e);
 		} catch (NamingException e) {
 			LOG.logp(Level.INFO, BSDataUtils.class.getName(), "getConnectionByDataSource",
-					"Error connecting width DataSource {0}. Let's try using JDBC connection", dsName);
-			return getConnection(dsName);
+					"Error connecting width DataSource (NamingException)");
+			throw new BSConfigurationException(e);
+			// return getConnection(dsName);
 		}
 
 		return conn;

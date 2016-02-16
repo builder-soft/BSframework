@@ -38,6 +38,7 @@ public class BSTableConfig {
 	private String viewName = null;
 	private String saveSP = null;
 	private String deleteSP = null;
+	private String where = null;
 
 	public BSTableConfig(String database) {
 		this.database = database;
@@ -703,4 +704,13 @@ public class BSTableConfig {
 		return out;
 	}
 
+	public String getWhere() {
+		return where;
+	}
+
+	public void setWhere(String where) {
+		this.where = where;
+	}
+
+	 
 }

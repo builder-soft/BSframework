@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import cl.buildersoft.framework.exception.BSDataBaseException;
 
 public class BSDataUtils {
@@ -96,7 +95,6 @@ public class BSDataUtils {
 					throw new BSDataBaseException(e);
 				}
 			}
-
 		}
 
 		return newKey;
@@ -134,8 +132,6 @@ public class BSDataUtils {
 	public ResultSet queryResultSet(Connection conn, String sql, List<Object> parameters) {
 		ResultSet out = null;
 
-		// PreparedStatement preparedStatement = null;
-
 		try {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameters, preparedStatement);
@@ -143,15 +139,6 @@ public class BSDataUtils {
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
-		// finally {
-		// if (preparedStatement != null) {
-		// try {
-		// preparedStatement.close();
-		// } catch (SQLException e) {
-		// throw new BSDataBaseException(e);
-		// }
-		// }
-		// }
 
 		return out;
 	}
@@ -202,7 +189,6 @@ public class BSDataUtils {
 		}
 	}
 
- 
 	/**
 	 * <code>
 	public Connection getConnection2() {
@@ -230,9 +216,9 @@ public class BSDataUtils {
 		}
 		return conn;
 		 
- 
 	}
 
+	 
 	private Connection getConnection(Map<String, DomainAttribute> domainAttribute) {
 		String driverName = domainAttribute.get("database.driver").getValue();
 		String serverName = domainAttribute.get("database.server").getValue();
@@ -242,18 +228,16 @@ public class BSDataUtils {
 
 		return getConnection(driverName, serverName, database, password, username);
 	}
-
+	
 	public Connection getConnection(HttpServletRequest request) {
 		BSConnectionFactory cf = new BSConnectionFactory();
 		return cf.getConnection(request);
 	}
  
- 
 	public Connection getConnection2(String dsName) {
 		BSConnectionFactory cf = new BSConnectionFactory();
 		return cf.getConnection(dsName);
 		 	
- 
 		Connection conn = null;
 
 		try {
@@ -272,10 +256,10 @@ public class BSDataUtils {
 		}
 
 		return conn;
- 
+		 
 	}
 
- 
+	 
 	public Connection getConnection2(Map<String, DomainAttribute> domainAttribute) {
 		DomainAttribute dataSource = domainAttribute.get("database.datasource");
 		Connection conn = null;

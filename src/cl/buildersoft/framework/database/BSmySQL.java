@@ -20,7 +20,7 @@ import cl.buildersoft.framework.util.crud.BSPaging;
 import cl.buildersoft.framework.util.crud.BSTableConfig;
 
 public class BSmySQL extends BSDataUtils {
-	CallableStatement callableStatement;
+	 CallableStatement callableStatement;
 
 	private final static Logger LOG = Logger.getLogger(BSmySQL.class.getName());
 
@@ -169,7 +169,7 @@ public class BSmySQL extends BSDataUtils {
 		String sqlStatement = getSQL4SP(name, parameter);
 
 		ResultSet out = null;
-		// callableStatement = null;
+//		callableStatement = null;
 		try {
 			callableStatement = conn.prepareCall(sqlStatement);
 			parametersToStatement(parameter, callableStatement);
@@ -302,7 +302,6 @@ public class BSmySQL extends BSDataUtils {
 
 		return out;
 	}
-
 	public void closeSQL() {
 		super.closeSQL();
 		if (this.callableStatement != null) {

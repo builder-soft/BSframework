@@ -9,6 +9,7 @@ public class BSAction {
 	private String[] natTable = null;
 	private String method = null;
 	private Boolean disabled = Boolean.FALSE;
+	private String warningMessage = null;
 
 	public String getMethod() {
 		return method;
@@ -87,6 +88,14 @@ public class BSAction {
 
 	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public String getWarningMessage() {
+		return warningMessage;
+	}
+
+	public void setWarningMessage(String warningMessage) {
+		this.warningMessage = warningMessage;
 	}
 
 }

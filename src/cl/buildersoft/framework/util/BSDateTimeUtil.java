@@ -7,11 +7,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 
 public class BSDateTimeUtil {
@@ -190,6 +190,19 @@ public class BSDateTimeUtil {
 	public static Calendar timestamp2Calendar(Timestamp timestamp) {
 		Calendar out = Calendar.getInstance();
 		out.setTimeInMillis(timestamp.getTime());
+		return out;
+	}
+
+	public static Long dateDiff(Calendar d1, Calendar d2) {
+		// Integer out = 0;
+
+		long diff = d2.getTimeInMillis() - d1.getTimeInMillis();
+		// long diffSeconds = diff / 1000;
+		// long diffMinutes = diff / (60 * 1000);
+		// long diffHours = diff / (60 * 60 * 1000);
+		long out = diff / (60 * 60 * 1000 * 8);
+		LOG.log(Level.INFO, "Time in days: " + out);
+
 		return out;
 	}
 }

@@ -201,7 +201,7 @@ public class BSDateTimeUtil {
 		// long diffMinutes = diff / (60 * 1000);
 		// long diffHours = diff / (60 * 60 * 1000);
 		long out = diff / (60 * 60 * 1000 * 8);
-		LOG.log(Level.INFO, "Time in days: " + out);
+		LOG.log(Level.FINE, "Time in days: " + out);
 
 		return out;
 	}

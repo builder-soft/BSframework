@@ -130,7 +130,7 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 					"Error connecting width DataSource (SQLException)", e);
 			throw new BSConfigurationException(e);
 		} catch (NamingException e) {
-			LOG.logp(Level.INFO, BSDataUtils.class.getName(), "getConnectionByDataSource",
+			LOG.logp(Level.WARNING, BSDataUtils.class.getName(), "getConnectionByDataSource",
 					"Error connecting width DataSource (NamingException)");
 			throw new BSConfigurationException(e);
 			// return getConnection(dsName);

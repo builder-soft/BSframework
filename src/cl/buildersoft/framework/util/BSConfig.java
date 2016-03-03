@@ -14,7 +14,18 @@ public class BSConfig extends BSDataUtils {
 	}
 
 	public Integer getInteger(Connection conn, String key) {
-		return Integer.parseInt(getValue(conn, key));
+		return getInteger(conn, key, null);
+	}
+
+	public Integer getInteger(Connection conn, String key, Integer defaultValue) {
+		String mayBeInteger = null;
+		if (defaultValue == null) {
+			mayBeInteger = getValue(conn, key);
+		} else {
+			mayBeInteger = getValue(conn, key, defaultValue.toString());
+		}
+
+		return mayBeInteger == null ? null : Integer.parseInt(mayBeInteger);
 	}
 
 	public void setInteger(Connection conn, String key, Integer value) {
@@ -38,8 +49,16 @@ public class BSConfig extends BSDataUtils {
 	}
 
 	private String getValue(Connection conn, String key) {
+		return getValue(conn, key, null);
+	}
+
+	private String getValue(Connection conn, String key, String defaultValue) {
 		String sql = "SELECT cValue FROM tParameter WHERE cKey=?";
-		return super.queryField(conn, sql, key);
+		String out = super.queryField(conn, sql, key);
+		if (out == null) {
+			out = defaultValue;
+		}
+		return out;
 	}
 
 	private void setValue(Connection conn, String key, String value) {

@@ -15,4 +15,5 @@ public interface BSMenuService {
 	public Boolean optionInMenu(Option opt, List<Submenu> main);
 	
 	public Option searchResourceByKey(Connection conn, String code);
+	public Option searchOptionByKey(Connection conn, String key);
 }

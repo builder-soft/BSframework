@@ -304,7 +304,7 @@ public class BSBeanUtils extends BSDataUtils {
 		} else if (typeString.indexOf("Date") > -1) {
 			out = Date.class;
 		} else {
-			throw new BSProgrammerException("El tipo de dato '" + type + "' que retorna el metodo '" + methodName
+			throw new BSProgrammerException("El tipo de dato '" + typeString + "' que retorna el metodo '" + methodName
 					+ "()', no fue encontrado");
 		}
 

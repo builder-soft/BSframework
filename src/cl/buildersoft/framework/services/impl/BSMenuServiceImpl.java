@@ -193,4 +193,21 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 		}
 		return out;
 	}
+
+	@Override
+	public Option searchOptionByKey(Connection conn, String key) {
+		String sql = "SELECT cId FROM tOption WHERE cKey=?";
+		Option out = null;
+
+		String idString = super.queryField(conn, sql, key);
+		if (idString != null) {
+			Long id = Long.parseLong(idString);
+			out = new Option();
+			out.setId(id);
+
+			BSBeanUtils bu = new BSBeanUtils();
+			bu.search(conn, out);
+		}
+		return out;
+	}
 }

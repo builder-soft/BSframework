@@ -1,6 +1,10 @@
 package cl.buildersoft.framework.beans;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+
+import cl.buildersoft.framework.util.BSDateTimeUtil;
 
 public class User extends BSBean implements Serializable {
 
@@ -9,6 +13,7 @@ public class User extends BSBean implements Serializable {
 	private String name = null;
 	private String password = null;
 	private Boolean admin = null;
+	private Date lastChangePass = null;
 	@SuppressWarnings("unused")
 	private String TABLE = "bsframework.tUser";
 
@@ -46,7 +51,16 @@ public class User extends BSBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [Id=" + getId() + ", name=" + name + ", mail=" + mail + ", admin=" + admin + "]";
+		return "User [Id=" + getId() + ", name=" + name + ", mail=" + mail + ", admin=" + admin + ", lastChangePass="
+				+ BSDateTimeUtil.date2String(lastChangePass, "yyyy-MM-dd") + "]";
+	}
+
+	public Date getLastChangePass() {
+		return lastChangePass;
+	}
+
+	public void setLastChangePass(Date lastChangePass) {
+		this.lastChangePass = lastChangePass;
 	}
 
 }

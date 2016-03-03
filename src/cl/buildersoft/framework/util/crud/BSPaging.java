@@ -103,12 +103,22 @@ public class BSPaging {
 
 	private String getWhere(BSTableConfig table) {
 		String out = "";
+		String where = table.getWhere();
 		if (!this.search.equals("")) {
 			BSField[] fields = table.getFields();
 			if (fields.length > 0) {
 				out = " WHERE CONCAT(" + unSplit(table, ",", true, true) + ") LIKE ?";
 			}
 		}
+
+		if (where != null && where.length() > 0) {
+			if (out.length() == 0) {
+				out = " WHERE " + where;
+			} else {
+				out += " AND " + where;
+			}
+		}
+
 		return out;
 	}
 

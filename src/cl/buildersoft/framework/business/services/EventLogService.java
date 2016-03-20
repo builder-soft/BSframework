@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.Calendar;
 import java.util.List;
 
-import cl.buildersoft.timectrl.business.beans.EventBean;
+import cl.buildersoft.framework.beans.EventBean;
 
 public interface EventLogService {
 	public void writeEntry(Connection conn, Long userId, String eventTypeKey, String what, Object... params);

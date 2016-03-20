@@ -9,16 +9,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cl.buildersoft.framework.beans.Event;
+import cl.buildersoft.framework.beans.EventBean;
+import cl.buildersoft.framework.beans.EventType;
 import cl.buildersoft.framework.business.services.EventLogService;
 import cl.buildersoft.framework.database.BSBeanUtils;
 import cl.buildersoft.framework.database.BSmySQL;
-import cl.buildersoft.framework.exception.BSConfigurationException;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.util.BSDateTimeUtil;
 import cl.buildersoft.framework.util.BSUtils;
-import cl.buildersoft.timectrl.business.beans.Event;
-import cl.buildersoft.timectrl.business.beans.EventBean;
-import cl.buildersoft.timectrl.business.beans.EventType;
 
 public class EventLogServiceImpl implements EventLogService {
 	private static final Logger LOG = Logger.getLogger(EventLogServiceImpl.class.getName());

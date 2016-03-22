@@ -8,7 +8,10 @@ import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -147,18 +150,26 @@ public class BSHttpServlet_ extends HttpServlet {
 		return session;
 	}
 
-	public void restoreSession(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public synchronized void restoreSession(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String token = readTokenValue(request);
 
 		if (token == null) {
-			LOG.log(Level.WARNING, "Cookie not found");
+			LOG.log(Level.WARNING, "Cookie not found, illegal access");
 		} else {
 			HttpSession session = request.getSession(false);
-
+			if (session == null) {
+				LOG.log(Level.WARNING, "Session is null, creating new");
+				session = request.getSession(true);
+			}
+			/**
+			 * <code>
+			LOG.log(Level.INFO, "session.getAttribute(SESSION_COOKIE_NAME) is null {0}",
+					session.getAttribute(SESSION_COOKIE_NAME) == null);
+					</code>
+			 */
 			if (session.getAttribute(SESSION_COOKIE_NAME) == null) {
+				// LOG.log(Level.INFO, "IF is true");
 				session.setAttribute(SESSION_COOKIE_NAME, token);
-				LOG.log(Level.INFO, "session.getAttribute(SESSION_COOKIE_NAME) is null {0}",
-						session.getAttribute(SESSION_COOKIE_NAME) == null);
 			}
 
 			BSConnectionFactory cf = new BSConnectionFactory();
@@ -176,10 +187,12 @@ public class BSHttpServlet_ extends HttpServlet {
 		if (token != null) {
 			HttpSession session = request.getSession(false);
 
+			// LOG.log(Level.INFO,
+			// "session.getAttribute(SESSION_COOKIE_NAME) is null {0}",
+			// session.getAttribute(SESSION_COOKIE_NAME) == null);
 			if (session.getAttribute(SESSION_COOKIE_NAME) == null) {
+				// LOG.log(Level.INFO, "IF is true");
 				session.setAttribute(SESSION_COOKIE_NAME, token);
-				LOG.log(Level.INFO, "session.getAttribute(SESSION_COOKIE_NAME) is null {0}",
-						session.getAttribute(SESSION_COOKIE_NAME) == null);
 			}
 
 			if (session != null) {
@@ -199,13 +212,10 @@ public class BSHttpServlet_ extends HttpServlet {
 
 	public void deleteSession(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession(false);
+		String token = readTokenValue(request);
+		saveCookieToResponse(response, token, true);
+
 		if (session != null) {
-			// String token =
-			// session.getAttribute(SESSION_COOKIE_NAME).toString();
-			String token = readTokenValue(request);
-
-			saveCookieToResponse(response, token, true);
-
 			deleteSessionOfDB(token);
 			session.invalidate();
 		}
@@ -355,18 +365,60 @@ public class BSHttpServlet_ extends HttpServlet {
 						sessionBean.getId());
 				Object obj = null;
 
-				Enumeration<String> names = session.getAttributeNames();
-				String name = null;
-				while (names.hasMoreElements()) {
-					name = names.nextElement();
-					session.removeAttribute(name);
-				}
+				Map<String, SessionDataBean> sessionDataMap = list2Map(objectList);
 
-				for (SessionDataBean record : objectList) {
+				String[] names = getNames(sessionDataMap);
+
+				SessionDataBean record = null;
+				// String name = null;
+
+				synchronized (session) {
+					for (String name : names) {
+						// name = names.nextElement();
+						obj = session.getAttribute(name);
+						if (obj != null) {
+							record = sessionDataMap.remove(name);
+							obj = stringToObject(record.getData());
+							session.setAttribute(record.getName(), obj);
+						}
+						// session.removeAttribute(name);
+
+					}
+
+					for (SessionDataBean current : sessionDataMap.values()) {
+						obj = stringToObject(current.getData());
+						session.setAttribute(current.getName(), obj);
+					}
+
+				}
+				/**
+				 * <code>				for (SessionDataBean record : objectList) {
 					obj = stringToObject(record.getData());
 					session.setAttribute(record.getName(), obj);
-				}
+	}
+ </code>
+				 */
 			}
 		}
+	}
+
+	private String[] getNames(Map<String, SessionDataBean> sessionDataMap) {
+		String out[] = new String[sessionDataMap.size()];
+		Set<String> names = sessionDataMap.keySet();
+		Integer i = 0;
+		for (String name : names) {
+			out[i] = name;
+		}
+		return out;
+	}
+
+	private Map<String, SessionDataBean> list2Map(List<SessionDataBean> objectList) {
+		Map<String, SessionDataBean> out = new HashMap<String, SessionDataBean>();
+
+		for (SessionDataBean sdb : objectList) {
+			out.put(sdb.getName(), sdb);
+		}
+
+		return out;
 	}
 }

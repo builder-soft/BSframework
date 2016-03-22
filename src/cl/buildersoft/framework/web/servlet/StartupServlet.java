@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import cl.buildersoft.framework.beans.Config;
 import cl.buildersoft.framework.database.BSBeanUtils;
 import cl.buildersoft.framework.util.BSConnectionFactory;
-import cl.buildersoft.framework.util.BSUtils;
 
 // @ WebServlet("/startup")
 public class StartupServlet extends BSHttpServlet_ {
@@ -35,11 +34,12 @@ public class StartupServlet extends BSHttpServlet_ {
 		ServletContext context = config.getServletContext();
 		try {
 			List<Config> configList = (List<Config>) bu.listAll(conn, new Config());
+			String msg = "";
 			for (Config configBean : configList) {
 				context.setAttribute(configBean.getKey(), configBean.getValue());
-				LOG.log(Level.INFO, "Reading Key={0} value={1}",
-						BSUtils.array2ObjectArray(configBean.getKey(), configBean.getValue()));
+				msg += String.format("Reading Key=%s value=%s\n", configBean.getKey(), configBean.getValue());
 			}
+			LOG.log(Level.INFO, msg);
 		} finally {
 			cf.closeConnection(conn);
 		}

@@ -30,12 +30,13 @@ public class UserExistsFilter implements Filter {
 
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException,
 			ServletException {
-		LOG.log(Level.FINE, "User Exists Filter");
+		Level level = Level.INFO;
+		LOG.log(level, "User Exists Filter");
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 		Boolean goHome = Boolean.FALSE;
 
-		LOG.log(Level.FINE, "URI: {0}", request.getRequestURI());
+		LOG.log(level, "URI: {0}", request.getRequestURI());
 
 		HttpSession session = request.getSession(false);
 

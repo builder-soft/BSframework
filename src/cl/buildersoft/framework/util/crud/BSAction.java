@@ -1,6 +1,7 @@
 package cl.buildersoft.framework.util.crud;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class BSAction implements Serializable {
 	private static final long serialVersionUID = -4582152338371155286L;
@@ -13,6 +14,7 @@ public class BSAction implements Serializable {
 	private String method = null;
 	private Boolean disabled = Boolean.FALSE;
 	private String warningMessage = null;
+	private String context = null;
 
 	public String getMethod() {
 		return method;
@@ -66,11 +68,6 @@ public class BSAction implements Serializable {
 		this.url = url;
 	}
 
-	@Override
-	public String toString() {
-		return "BSAction [code=" + code + ", label=" + label + ", actionType=" + actionType + ", url=" + url + "]";
-	}
-
 	public String[] getNatTable() {
 		return natTable;
 	}
@@ -99,6 +96,21 @@ public class BSAction implements Serializable {
 
 	public void setWarningMessage(String warningMessage) {
 		this.warningMessage = warningMessage;
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
+	}
+
+	@Override
+	public String toString() {
+		return "BSAction [code=" + code + ", defaultCode=" + defaultCode + ", label=" + label + ", actionType=" + actionType
+				+ ", url=" + url + ", natTable=" + Arrays.toString(natTable) + ", method=" + method + ", disabled=" + disabled
+				+ ", warningMessage=" + warningMessage + ", context=" + context + "]";
 	}
 
 }

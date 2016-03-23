@@ -97,6 +97,7 @@ public class BSTableConfig implements Serializable {
 		BSAction insert = new BSAction("INSERT", BSActionType.Table);
 		insert.setLabel("Nuevo");
 		insert.setUrl("/servlet/common/NewRecord");
+		insert.setContext("DALEA_CONTEXT");
 		this.addAction(insert);
 	}
 
@@ -104,6 +105,7 @@ public class BSTableConfig implements Serializable {
 		BSAction edit = new BSAction("EDIT", BSActionType.Record);
 		edit.setLabel("Modificar");
 		edit.setUrl("/servlet/common/SearchRecord");
+		edit.setContext("DALEA_CONTEXT");
 		this.addAction(edit);
 	}
 
@@ -111,6 +113,7 @@ public class BSTableConfig implements Serializable {
 		BSAction delete = new BSAction("DELETE", BSActionType.MultiRecord);
 		delete.setLabel("Borrar");
 		delete.setUrl("/servlet/common/crud/DeleteRecords");
+		delete.setContext("DALEA_CONTEXT");
 		this.addAction(delete);
 	}
 

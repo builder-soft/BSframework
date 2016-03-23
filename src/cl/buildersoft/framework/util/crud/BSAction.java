@@ -1,6 +1,9 @@
 package cl.buildersoft.framework.util.crud;
 
-public class BSAction {
+import java.io.Serializable;
+
+public class BSAction implements Serializable {
+	private static final long serialVersionUID = -4582152338371155286L;
 	private String code = null;
 	private String defaultCode = null;
 	private String label = null;

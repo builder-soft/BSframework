@@ -37,7 +37,7 @@ public class StartupServlet extends BSHttpServlet_ {
 			String msg = "";
 			for (Config configBean : configList) {
 				context.setAttribute(configBean.getKey(), configBean.getValue());
-				msg += String.format("Reading Key=%s value=%s\n", configBean.getKey(), configBean.getValue());
+				msg += String.format("\nReading Key=%s value=%s", configBean.getKey(), configBean.getValue());
 			}
 			LOG.log(Level.INFO, msg);
 		} finally {

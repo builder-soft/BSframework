@@ -1,5 +1,6 @@
 package cl.buildersoft.framework.util.crud;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -19,8 +20,9 @@ import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 import cl.buildersoft.framework.util.BSUtils;
 
-public class BSTableConfig {
+public class BSTableConfig implements Serializable {
 	private final static Logger LOG = Logger.getLogger(BSTableConfig.class.getName());
+	private static final long serialVersionUID = 5244852621619707464L;
 	private String database = null;
 	private String tableName = null;
 	private String[] fields = null;
@@ -712,5 +714,4 @@ public class BSTableConfig {
 		this.where = where;
 	}
 
-	 
 }

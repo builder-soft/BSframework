@@ -1,5 +1,6 @@
 package cl.buildersoft.framework.dataType.impl;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,7 +13,8 @@ import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 import cl.buildersoft.framework.util.BSConfig;
 
-public class BSTimestamp extends BSDataTypeAbstract implements BSDataType {
+public class BSTimestamp extends BSDataTypeAbstract implements BSDataType, Serializable {
+ 	private static final long serialVersionUID = 721461768903690288L;
 
 	@Override
 	public String format(Connection conn, Object data) {

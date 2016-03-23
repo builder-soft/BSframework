@@ -316,6 +316,7 @@ public class BSHttpServlet_ extends HttpServlet {
 			oos = new ObjectOutputStream(baos);
 			oos.writeObject(obj);
 		} catch (IOException e) {
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 			throw new BSSystemException(e);
 		}
 		byte[] userAsBytes = baos.toByteArray();

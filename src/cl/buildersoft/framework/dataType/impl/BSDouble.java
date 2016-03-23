@@ -1,12 +1,14 @@
 package cl.buildersoft.framework.dataType.impl;
 
+import java.io.Serializable;
 import java.sql.Connection;
 
 import cl.buildersoft.framework.dataType.BSDataType;
 import cl.buildersoft.framework.dataType.BSDataTypeAbstract;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 
-public class BSDouble extends BSDataTypeAbstract implements BSDataType {
+public class BSDouble extends BSDataTypeAbstract implements BSDataType, Serializable {
+	private static final long serialVersionUID = 3984666078835203802L;
 
 	@Override
 	public String format(Connection conn, Object data) {

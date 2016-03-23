@@ -1,5 +1,6 @@
 package cl.buildersoft.framework.dataType.impl;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,7 +13,8 @@ import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 import cl.buildersoft.framework.util.BSConfig;
 
-public class BSDate extends BSDataTypeAbstract implements BSDataType {
+public class BSDate extends BSDataTypeAbstract implements BSDataType, Serializable {
+	private static final long serialVersionUID = 2277267958038773954L;
 	private Date value = null;
 
 	public BSDate() {
@@ -25,15 +27,17 @@ public class BSDate extends BSDataTypeAbstract implements BSDataType {
 		String formatDate = config.getString(conn, "FORMAT_DATE");
 		String out = null;
 		DateFormat formatter = new SimpleDateFormat(formatDate);
-		
+
 		out = formatter.format((Date) data);
-		/**<code>
+		/**
+		 * <code>
 		try {
 			out = formatter.format((Date) data);
 		} catch (ParseException e) {
 			throw new BSProgrammerException("No se puede formatear el dato " + data);
 		}
-		</code>*/
+		</code>
+		 */
 		return out;
 	}
 

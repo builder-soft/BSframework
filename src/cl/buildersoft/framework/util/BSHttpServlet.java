@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import cl.buildersoft.framework.beans.Domain;
 import cl.buildersoft.framework.beans.User;
 import cl.buildersoft.framework.database.BSmySQL;
+import cl.buildersoft.framework.exception.BSProgrammerException;
 
 public class BSHttpServlet extends HttpServlet {
 	private static final Logger LOG = Logger.getLogger(BSHttpServlet.class.getName());
@@ -46,7 +47,8 @@ public class BSHttpServlet extends HttpServlet {
 
 	protected void forward(HttpServletRequest request, HttpServletResponse response, String uri) throws ServletException,
 			IOException {
-		request.getRequestDispatcher(uri).forward(request, response);
+		throw new BSProgrammerException("Please, call BSHttpServlet correct");
+//		request.getRequestDispatcher(uri).forward(request, response);
 	}
 
 	protected String readParameterOrAttribute(HttpServletRequest request, String name) {

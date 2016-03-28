@@ -7,12 +7,14 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cl.buildersoft.framework.beans.LogInfoBean;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.dataType.BSDataTypeFactory;
 import cl.buildersoft.framework.database.BSmySQL;
@@ -41,6 +43,8 @@ public class BSTableConfig implements Serializable {
 	private String saveSP = null;
 	private String deleteSP = null;
 	private String where = null;
+
+	private LogInfoBean logInfo[] = null;
 
 	public BSTableConfig(String database) {
 		this.database = database;
@@ -715,6 +719,32 @@ public class BSTableConfig implements Serializable {
 
 	public void setWhere(String where) {
 		this.where = where;
+	}
+
+	public void addLogInfo(LogInfoBean logInfo) {
+		// System.arraycopy(out, 0, aux, 0, out.length);
+		if (this.logInfo == null) {
+			this.logInfo = new LogInfoBean[0];
+		}
+
+		this.logInfo = Arrays.copyOf(this.logInfo, this.logInfo.length + 1);
+		// System.arraycopy(this.logInfo, 0, this.logInfo, 0,
+		// this.logInfo.length);
+		this.logInfo[this.logInfo.length-1] = logInfo;
+		// this.logInfo
+	}
+
+	public LogInfoBean getLogInfo(String action) {
+		LogInfoBean out = null;
+		if (this.logInfo != null) {
+			for (LogInfoBean logInfo : this.logInfo) {
+				if (logInfo.getAction().equalsIgnoreCase(action)) {
+					out = logInfo;
+					break;
+				}
+			}
+		}
+		return out;
 	}
 
 }

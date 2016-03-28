@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -75,6 +76,18 @@ public class BSHttpServlet_ extends HttpServlet {
 			out = request.getParameter(name);
 		}
 		return out;
+	}
+
+	protected ServletOutputStream configHeaderAsCSV(HttpServletResponse response, String fileName) throws IOException {
+		return configHeaderAsFile(response, fileName + ".csv");
+	}
+
+	protected ServletOutputStream configHeaderAsFile(HttpServletResponse response, String fileName) throws IOException {
+		ServletOutputStream output = response.getOutputStream();
+		response.setContentType("text/csv");
+		String disposition = "attachment; fileName=" + fileName;
+		response.setHeader("Content-Disposition", disposition);
+		return output;
 	}
 
 	protected User getCurrentUser(HttpServletRequest request) {

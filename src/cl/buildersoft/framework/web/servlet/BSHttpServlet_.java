@@ -214,6 +214,8 @@ public class BSHttpServlet_ extends HttpServlet {
 				try {
 					// saveSessionToDB(conn, session, sessionId);
 					saveSessionToDB(conn, session, false);
+				} catch (Exception e) {
+					LOG.log(Level.SEVERE, e.getMessage(), e);
 				} finally {
 					cf.closeConnection(conn);
 				}

@@ -25,7 +25,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 
 	protected abstract BSTableConfig getBSTableConfig(HttpServletRequest request);
 
-	protected abstract Semaphore setSemaphore(Connection conn, Object[] values);
+	public abstract Semaphore setSemaphore(Connection conn, Object[] values);
 
 	protected abstract void configEventLog(BSTableConfig table, Long userId);
 
@@ -45,7 +45,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 			session.setAttribute("BSTable", table);
 		}
 
-		forward(request, response, "/servlet/common/LoadTable");
+		forward(request, response, "/servlet/common/LoadTable", false);
 
 	}
 

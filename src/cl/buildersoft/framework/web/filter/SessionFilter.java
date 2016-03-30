@@ -12,9 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import cl.buildersoft.framework.util.BSUtils;
 import cl.buildersoft.framework.web.servlet.BSHttpServlet_;
 
 // @ WebFilter(dispatcherTypes = { DispatcherType.REQUEST }, urlPatterns = { "/servlet/*" })
@@ -34,12 +32,12 @@ public class SessionFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) rq;
 		HttpServletResponse response = (HttpServletResponse) rs;
 
-//		request.getSession(true);
+		// request.getSession(true);
 
 		BSHttpServlet_ su = new BSHttpServlet_();
 
 		try {
-			
+			LOG.log(Level.INFO, "Starting restore session");
 			su.restoreSession(request, response);
 		} catch (Exception e) {
 			throw new ServletException(e);

@@ -52,9 +52,10 @@ public class LoadTable extends BSHttpServlet_ {
 				session.setAttribute("BSTable", table);
 			}
 		} finally {
-//			cf.closeConnection(conn);
+			// cf.closeConnection(conn);
 		}
-		forward(request, response, "/WEB-INF/jsp/common/main2.jsp");
+		redirect(request, response, getApplicationValue(request, "DALEA_CONTEXT") + "/jsp/common/crud/main2.jsp");
+		// forward(request, response, "/WEB-INF/jsp/common/main2.jsp");
 
 	}
 }

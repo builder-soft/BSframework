@@ -43,8 +43,10 @@ public class BSTableConfig implements Serializable {
 	private String saveSP = null;
 	private String deleteSP = null;
 	private String where = null;
-
+	
 	private LogInfoBean logInfo[] = null;
+	
+	private List<Object[]> data = null;
 
 	public BSTableConfig(String database) {
 		this.database = database;
@@ -745,6 +747,14 @@ public class BSTableConfig implements Serializable {
 			}
 		}
 		return out;
+	}
+
+	public List<Object[]> getData() {
+		return data;
+	}
+
+	public void setData(List<Object[]> data) {
+		this.data = data;
 	}
 
 }

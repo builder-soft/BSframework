@@ -37,7 +37,7 @@ public class SessionFilter implements Filter {
 		BSHttpServlet_ su = new BSHttpServlet_();
 
 		try {
-			LOG.log(Level.INFO, "Starting restore session");
+//			LOG.log(Level.INFO, "Starting restore session");
 			su.restoreSession(request, response);
 		} catch (Exception e) {
 			throw new ServletException(e);

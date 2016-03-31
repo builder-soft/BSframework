@@ -226,7 +226,7 @@ public class BSmySQL extends BSDataUtils {
 		return out;
 	}
 
-	public Map<Long, Map<String, Object>> resultSet2Map(ResultSet rs) {
+	private Map<Long, Map<String, Object>> resultSet2Map(ResultSet rs) {
 		Map<Long, Map<String, Object>> out = new HashMap<Long, Map<String, Object>>();
 
 		Integer i = 0;
@@ -274,7 +274,7 @@ public class BSmySQL extends BSDataUtils {
 		}
 	}
 
-	public List<Object[]> resultSet2Matrix2(ResultSet rs) {
+	private List<Object[]> resultSet2Matrix2(ResultSet rs) {
 		List<Object[]> out = new ArrayList<Object[]>();
 
 		Integer colCount = 0;
@@ -291,7 +291,6 @@ public class BSmySQL extends BSDataUtils {
 				innerArray = new Object[colCount];
 				for (Integer i = 1; i <= colCount; i++) {
 					innerArray[i - 1] = rs.getObject(i);
-
 				}
 				out.add(innerArray);
 			}

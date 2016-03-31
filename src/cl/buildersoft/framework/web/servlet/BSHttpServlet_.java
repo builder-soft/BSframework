@@ -103,9 +103,7 @@ public class BSHttpServlet_ extends HttpServlet {
 		String name = null;
 		while (names.hasMoreElements()) {
 			name = (String) names.nextElement();
-
 			LOG.log(Level.CONFIG, "Name={0}", request.getParameter(name));
-
 		}
 	}
 
@@ -140,6 +138,8 @@ public class BSHttpServlet_ extends HttpServlet {
 	protected void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException,
 			IOException {
 		updateSession(request, response);
+//		LOG.log(Level.INFO, "SendRedirect to {0}", url);
+		
 		response.sendRedirect(url);
 	}
 

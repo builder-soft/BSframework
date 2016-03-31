@@ -16,6 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,6 +36,7 @@ import cl.buildersoft.framework.services.impl.BSMenuServiceImpl;
 import cl.buildersoft.framework.util.crud.BSField;
 
 public class BSWeb {
+	private static final Logger LOG = Logger.getLogger(BSWeb.class.getName());
 	private static final String LOCALE = "LOCALE";
 	private static final String PATTERN_DECIMAL = "PATTERN_DECIMAL";
 	private static final String PATTERN_INTEGER = "PATTERN_INTEGER";
@@ -291,28 +294,36 @@ public class BSWeb {
 	 */
 
 	/********************/
-	public static Boolean canUse(String optionKey, HttpServletRequest request, Connection conn) {
+	public static Boolean canUse(String optionKey, HttpServletRequest request) {
 		Boolean out = Boolean.TRUE;
 
 		BSmySQL mysql = new BSmySQL();
-		// Connection conn = mysql.getConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = null;
 
-		BSMenuService menuService = new BSMenuServiceImpl();
-		Option option = menuService.searchResourceByKey(conn, optionKey);
-		if (option != null) {
-			List<Rol> rols = null;
+		try {
+			conn = cf.getConnection(request);
+			BSMenuService menuService = new BSMenuServiceImpl();
+			Option option = menuService.searchResourceByKey(conn, optionKey);
+			if (option != null) {
+				List<Rol> rols = null;
 
-			HttpSession session = request.getSession(false);
-			synchronized (session) {
-				rols = (List<Rol>) session.getAttribute("Rol");
-			}
+				HttpSession session = request.getSession(false);
+				synchronized (session) {
+					rols = (List<Rol>) session.getAttribute("Rol");
+				}
 
-			for (Rol rol : rols) {
-				out = validResourceByRol(conn, mysql, option.getId(), rol.getId());
-				if (out) {
-					break;
+				for (Rol rol : rols) {
+					out = validResourceByRol(conn, mysql, option.getId(), rol.getId());
+					if (out) {
+						break;
+					}
 				}
 			}
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			cf.closeConnection(conn);
 		}
 
 		// new BSmySQL().closeConnection(conn);

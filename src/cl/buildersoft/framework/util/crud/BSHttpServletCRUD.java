@@ -2,8 +2,8 @@ package cl.buildersoft.framework.util.crud;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,16 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import cl.buildersoft.framework.beans.Domain;
-import cl.buildersoft.framework.beans.LogInfoBean;
-import cl.buildersoft.framework.business.services.EventLogService;
-import cl.buildersoft.framework.business.services.ServiceFactory;
 import cl.buildersoft.framework.database.BSmySQL;
-import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.type.Semaphore;
-import cl.buildersoft.framework.util.BSUtils;
 import cl.buildersoft.framework.web.servlet.BSHttpServlet_;
 
 public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
+	private static final Logger LOG = Logger.getLogger(BSHttpServletCRUD.class.getName());
 	private static final long serialVersionUID = BSHttpServletCRUD.class.getName().hashCode();
 
 	protected abstract BSTableConfig getBSTableConfig(HttpServletRequest request);
@@ -36,7 +32,11 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BSTableConfig table = getBSTableConfig(request);
 
-		String uri = request.getRequestURI().substring(request.getContextPath().length());
+		String uri =  request.getServletContext().getAttribute("DALEA_CONTEXT").toString();   // request.getRequestURI().substring(request.getContextPath().length());
+//		LOG.log(Level.INFO, request.getRequestURI().substring(request.getContextPath().length()));
+//		LOG.log(Level.INFO, request.getRequestURI());
+		
+		uri = request.getRequestURI();
 
 		table.setUri(uri);
 

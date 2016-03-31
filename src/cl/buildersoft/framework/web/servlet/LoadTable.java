@@ -1,8 +1,11 @@
 package cl.buildersoft.framework.web.servlet;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +23,7 @@ import cl.buildersoft.framework.util.crud.BSTableConfig;
  */
 @WebServlet("/servlet/common/LoadTable")
 public class LoadTable extends BSHttpServlet_ {
+	private static final Logger LOG = Logger.getLogger(LoadTable.class.getName());
 	private static final long serialVersionUID = -2257837165074641521L;
 
 	public LoadTable() {
@@ -33,6 +37,9 @@ public class LoadTable extends BSHttpServlet_ {
 			table = (BSTableConfig) session.getAttribute("BSTable");
 		}
 
+		// LOG.log(Level.INFO, "Context param: {0}",
+		// request.getServletContext().getInitParameter("CurrentVersion"));
+
 		BSmySQL mysql = new BSmySQL();
 
 		BSConnectionFactory cf = new BSConnectionFactory();
@@ -42,19 +49,29 @@ public class LoadTable extends BSHttpServlet_ {
 
 			BSPaging paging = new BSPaging(conn, mysql, table, request);
 			ResultSet rs = mysql.queryResultSet(conn, table, paging);
+			table.setData(mysql.resultSet2Matrix(rs, false));
 
-			request.setAttribute("Data", rs);
-			request.setAttribute("Conn", conn);
-			request.setAttribute("Paging", paging);
-			request.setAttribute("Search", paging.getSearchValue(request));
-
+			// request.setAttribute("Data", rs);
+			// request.setAttribute("Conn", conn);
 			synchronized (session) {
+				session.setAttribute("Paging", paging);
+				session.setAttribute("Search", paging.getSearchValue(request));
 				session.setAttribute("BSTable", table);
 			}
 		} finally {
-			// cf.closeConnection(conn);
+			cf.closeConnection(conn);
 		}
-		redirect(request, response, getApplicationValue(request, "DALEA_CONTEXT") + "/jsp/common/crud/main2.jsp");
+
+		if (!"DALEA_CONTEXT".equals(getApplicationValue(request, "CurrentContext"))) {
+//			LOG.log(Level.INFO, "save session and redirect");
+			String daleaContext = getApplicationValue(request, "DALEA_CONTEXT").toString();
+			String url = daleaContext + "/servlet/RedirectServlet?URL="
+					+ URLEncoder.encode("/jsp/common/crud/main2.jsp", "UTF-8");
+			redirect(request, response, url);
+		} else {
+//			LOG.log(Level.INFO, "forward");
+			forward(request, response, "/jsp/common/crud/main2.jsp", true);
+		}
 		// forward(request, response, "/WEB-INF/jsp/common/main2.jsp");
 
 	}

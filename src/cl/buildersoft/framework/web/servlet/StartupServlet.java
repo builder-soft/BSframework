@@ -11,10 +11,13 @@ import javax.servlet.ServletException;
 
 import cl.buildersoft.framework.beans.Config;
 import cl.buildersoft.framework.database.BSBeanUtils;
+import cl.buildersoft.framework.exception.BSConfigurationException;
 import cl.buildersoft.framework.util.BSConnectionFactory;
+import cl.buildersoft.framework.util.BSUtils;
 
 // @ WebServlet("/startup")
 public class StartupServlet extends BSHttpServlet_ {
+	private static final String CURRENT_CONTEXT = "CurrentContext";
 	private static final Logger LOG = Logger.getLogger(StartupServlet.class.getName());
 	private static final long serialVersionUID = 4859610759900103241L;
 
@@ -43,6 +46,15 @@ public class StartupServlet extends BSHttpServlet_ {
 		} finally {
 			cf.closeConnection(conn);
 		}
+
+		String currentContext = context.getInitParameter(CURRENT_CONTEXT);
+		if (currentContext == null) {
+			throw new BSConfigurationException("'" + CURRENT_CONTEXT + "' is not declared in web.xml file for "
+					+ context.getContextPath());
+		} else {
+			LOG.log(Level.INFO, "{0} is declared for {1}", BSUtils.array2ObjectArray(currentContext, context.getContextPath()));
+		}
+		context.setAttribute(CURRENT_CONTEXT, currentContext);
 
 	}
 

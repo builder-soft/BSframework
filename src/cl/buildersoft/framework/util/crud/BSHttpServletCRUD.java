@@ -12,6 +12,8 @@ import javax.servlet.http.HttpSession;
 
 import cl.buildersoft.framework.beans.Domain;
 import cl.buildersoft.framework.database.BSmySQL;
+import cl.buildersoft.framework.exception.BSConfigurationException;
+import cl.buildersoft.framework.exception.BSProgrammerException;
 import cl.buildersoft.framework.type.Semaphore;
 import cl.buildersoft.framework.web.servlet.BSHttpServlet_;
 
@@ -32,11 +34,14 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BSTableConfig table = getBSTableConfig(request);
 
-		String uri =  request.getServletContext().getAttribute("DALEA_CONTEXT").toString();   // request.getRequestURI().substring(request.getContextPath().length());
-//		LOG.log(Level.INFO, request.getRequestURI().substring(request.getContextPath().length()));
-//		LOG.log(Level.INFO, request.getRequestURI());
-		
+		String uri = request.getServletContext().getAttribute("DALEA_CONTEXT").toString(); // request.getRequestURI().substring(request.getContextPath().length());
+		// LOG.log(Level.INFO,
+		// request.getRequestURI().substring(request.getContextPath().length()));
+		// LOG.log(Level.INFO, request.getRequestURI());
+
 		uri = request.getRequestURI();
+
+		verifyContextOfActions(table.getActions());
 
 		table.setUri(uri);
 
@@ -46,6 +51,17 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 		}
 
 		forward(request, response, "/servlet/common/LoadTable", false);
+
+	}
+
+	private void verifyContextOfActions(BSAction[] actions) {
+		String context = null;
+		for (BSAction action : actions) {
+			context = action.getContext();
+			if (context == null || context.length() == 0) {
+				throw new BSProgrammerException("Action '" + action.getCode() + "' widthout context defined");
+			}
+		}
 
 	}
 

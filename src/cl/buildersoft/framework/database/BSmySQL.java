@@ -226,7 +226,7 @@ public class BSmySQL extends BSDataUtils {
 		return out;
 	}
 
-	private Map<Long, Map<String, Object>> resultSet2Map(ResultSet rs) {
+	public Map<Long, Map<String, Object>> resultSet2Map(ResultSet rs) {
 		Map<Long, Map<String, Object>> out = new HashMap<Long, Map<String, Object>>();
 
 		Integer i = 0;

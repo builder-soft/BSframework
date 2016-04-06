@@ -28,11 +28,12 @@ public class LoadApplicationValuesFilter implements Filter {
 
 	public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
+		LOG.log(Level.FINE, "Load Application Values Filter");
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 
 		Object dateFormatObject = request.getServletContext().getAttribute(DATE_FORMAT);
 		if (dateFormatObject == null) {
-			LOG.log(Level.INFO, "Reading DateFormat");
+			LOG.log(Level.FINE, "Reading DateFormat");
 			request.getServletContext().setAttribute(DATE_FORMAT, BSDateTimeUtil.getFormatDate(request));
 		}
 		chain.doFilter(request, response);

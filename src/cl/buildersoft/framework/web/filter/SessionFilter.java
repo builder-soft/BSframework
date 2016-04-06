@@ -31,13 +31,12 @@ public class SessionFilter implements Filter {
 	public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) rq;
 		HttpServletResponse response = (HttpServletResponse) rs;
-
+		LOG.log(Level.FINE, "Session Filter");
 		// request.getSession(true);
 
 		BSHttpServlet_ su = new BSHttpServlet_();
 
 		try {
-//			LOG.log(Level.INFO, "Starting restore session");
 			su.restoreSession(request, response);
 		} catch (Exception e) {
 			throw new ServletException(e);

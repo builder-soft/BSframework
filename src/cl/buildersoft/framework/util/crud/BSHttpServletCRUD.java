@@ -35,12 +35,15 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 		BSTableConfig table = getBSTableConfig(request);
 
 		String uri = request.getServletContext().getAttribute("DALEA_CONTEXT").toString(); // request.getRequestURI().substring(request.getContextPath().length());
-		// LOG.log(Level.INFO,
-		// request.getRequestURI().substring(request.getContextPath().length()));
-		// LOG.log(Level.INFO, request.getRequestURI());
+		LOG.log(Level.FINE, request.getRequestURI().substring(request.getContextPath().length()));
+		LOG.log(Level.FINE, request.getRequestURI());
+		LOG.log(Level.FINE, request.getServletContext().getInitParameter("CurrentContext"));
 
 		uri = request.getRequestURI();
+		uri = request.getRequestURI().substring(request.getContextPath().length());
 
+		table.setContext(request.getServletContext().getAttribute("CurrentContext").toString());
+		
 		verifyContextOfActions(table.getActions());
 
 		table.setUri(uri);

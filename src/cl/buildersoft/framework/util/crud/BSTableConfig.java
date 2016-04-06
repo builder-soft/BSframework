@@ -47,6 +47,7 @@ public class BSTableConfig implements Serializable {
 	private LogInfoBean logInfo[] = null;
 	
 	private List<Object[]> data = null;
+	private String context = null;
 
 	public BSTableConfig(String database) {
 		this.database = database;
@@ -659,8 +660,8 @@ public class BSTableConfig implements Serializable {
 	public Map<String, BSField> deleteIdMap() {
 		BSField[] out = this.deleteId();
 		Map<String, BSField> mapField = new HashMap<String, BSField>();
-		for (BSField s : out) {
-			mapField.put(s.getName(), s);
+		for (BSField f : out) {
+			mapField.put(f.getName(), f);
 		}
 		return mapField;
 	}
@@ -755,6 +756,14 @@ public class BSTableConfig implements Serializable {
 
 	public void setData(List<Object[]> data) {
 		this.data = data;
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
 	}
 
 }

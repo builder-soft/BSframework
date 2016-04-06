@@ -27,7 +27,7 @@ public class NoCacheFilter implements Filter {
 
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException,
 			ServletException {
-		LOG.log(Level.FINEST, "No Cache Filter");
+		LOG.log(Level.FINE, "No Cache Filter");
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 		response.setDateHeader("Date", new Date().getTime());
 		response.setDateHeader("Expires", 0);

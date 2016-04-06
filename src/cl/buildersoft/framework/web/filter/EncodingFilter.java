@@ -24,7 +24,7 @@ public class EncodingFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-		LOG.log(Level.FINEST,"In Enconding Filter");
+		LOG.log(Level.FINE,"In Enconding Filter");
 		if (this.encoding != null) {
 			if (null == request.getCharacterEncoding())
 				request.setCharacterEncoding(this.encoding);

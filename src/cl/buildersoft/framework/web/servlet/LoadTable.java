@@ -70,7 +70,7 @@ public class LoadTable extends BSHttpServlet_ {
 			redirect(request, response, url);
 		} else {
 //			LOG.log(Level.INFO, "forward");
-			forward(request, response, "/jsp/common/crud/main2.jsp", true);
+			forward(request, response, "/jsp/common/crud/main2.jsp", false);
 		}
 		// forward(request, response, "/WEB-INF/jsp/common/main2.jsp");
 

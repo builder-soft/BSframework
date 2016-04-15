@@ -348,7 +348,7 @@ public class BSHttpServlet_ extends HttpServlet {
 			if (session != null) {
 				Object obj = session.getAttribute(cookieName);
 				if (obj != null) {
-					LOG.log(Level.INFO, "Reading cookie \"{0}\" from session", cookieName);
+					LOG.log(Level.FINE, "Reading cookie \"{0}\" from session", cookieName);
 					out = (String) obj;
 				}
 			}
@@ -437,7 +437,6 @@ public class BSHttpServlet_ extends HttpServlet {
 						obj = stringToObject(current.getData());
 						session.setAttribute(current.getName(), obj);
 					}
-
 				}
 				/**
 				 * <code>				for (SessionDataBean record : objectList) {

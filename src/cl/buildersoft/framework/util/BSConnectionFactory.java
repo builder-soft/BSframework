@@ -26,32 +26,10 @@ import cl.buildersoft.framework.exception.BSDataBaseException;
 public class BSConnectionFactory {
 	/**
 	 * <code>
-Métodos a implementar:
----------------------
-- getConn(String DomainName) : Llama a getParameters() y luego a JDBC()
-- getConn(HttpServletRequest request) : Buscar el DnsName del dominio actual y abre la coneccion. Si falla llama a getConn(String DomainName)
-- getConn() : Abre una coneccion de la base bsframework
+Hay que implementar un método en el cual se indique el módulo y el dominio de conección 
+para saber a cual base de datos se debe conectar el datasource.
 
-OK - JDBC(driver, url, user, password): crea una coneccion jdbc directa a la base de datos.
-OK - get2(String dataSourceName): Abre una coneccion usando directamente el datasource, si hay error, usa el método getConn(domainName)
-OK - getParameters(dnsName): Abre el archivo context.xml y busca/retorna los parametros de coneccion.
-
-Otras actividades:
------------------
-- Hay que borrar los datos de coneccion de la tabla tDomainAttribute.
-- Configurar todos los datos de todas las conecciones en el archivo META-INF/context.xml
-- Borrar los datos de coneccion del archivo web.xml.
-- Las siguientes clases deben llamar a la clase BSConnectionFactory, esto debe ser revisado caso a caso:
-OK  - cl.buildersoft.framework.util.BSDataUtils
-OK  - cl.buildersoft.framework.util.BSHttpServlet
-
-OK  - cl.buildersoft.timectrl.business.console.AbstractConsoleService
-OK  - cl.buildersoft.timectrl.business.console.BuildReport (para borrar la clase)
-OK  - cl.buildersoft.timectrl.business.process.AbstractProcess
-  
-OK  - cl.buildersoft.web.filter.LicenseValidation
-OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
-  - cl.buildersoft.web.servlet.timectrl.employeeLicense.ReadExcelWithLicensing
+- getConnection(HttpServletRequest, String module)
 
 </code>
 	 */
@@ -76,7 +54,7 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 			out = getConnectionByDataSource(dsName);
 		} catch (RuntimeException e) {
 			// if (e.getCause() instanceof NoInitialContextException) {
-			String[] params = getConnectionParameters(dsName);
+			String[] params = getDataConnection(dsName);
 			out = getConnectionJDBC(params[0], params[1], params[2], params[3]);
 			// }
 		}
@@ -139,7 +117,7 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 		return conn;
 	}
 
-	private String[] getConnectionParameters(String dsName) {
+	private String[] getDataConnection(String dsName) {
 		String[] out = new String[4];
 
 		String fileConfigPath = System.getenv("BS_PATH") + File.separatorChar + ".." + File.separatorChar + "META-INF"

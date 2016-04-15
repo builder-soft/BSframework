@@ -52,7 +52,8 @@ public class StartupServlet extends BSHttpServlet_ {
 			throw new BSConfigurationException("'" + CURRENT_CONTEXT + "' is not declared in web.xml file for "
 					+ context.getContextPath());
 		} else {
-			LOG.log(Level.INFO, "{0} is declared for {1}", BSUtils.array2ObjectArray(currentContext, context.getContextPath()));
+			LOG.log(Level.INFO, "{0} is declared in web.xml file for {1}",
+					BSUtils.array2ObjectArray(currentContext, context.getContextPath()));
 		}
 		context.setAttribute(CURRENT_CONTEXT, currentContext);
 

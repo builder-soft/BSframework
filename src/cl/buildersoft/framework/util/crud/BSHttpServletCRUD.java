@@ -33,6 +33,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BSTableConfig table = getBSTableConfig(request);
+		configEventLog(table, getCurrentUser(request).getId());
 
 		String uri = null; // request.getServletContext().getAttribute("DALEA_CONTEXT").toString();
 							// //

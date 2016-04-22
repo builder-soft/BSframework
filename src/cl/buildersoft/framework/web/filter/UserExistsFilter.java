@@ -1,6 +1,7 @@
 package cl.buildersoft.framework.web.filter;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import cl.buildersoft.framework.util.BSUtils;
 
 /**
  * Servlet Filter implementation class UserExists
@@ -31,12 +34,27 @@ public class UserExistsFilter implements Filter {
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException,
 			ServletException {
 		Level level = Level.FINE;
-		LOG.log(level, "User Exists Filter");
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+		LOG.log(Level.CONFIG,
+				"User Exists Filter, Context: {0}, {1}",
+				BSUtils.array2ObjectArray(request.getServletContext().getAttribute("CurrentContext").toString(),
+						request.getRequestURI()));
+
 		Boolean goHome = Boolean.FALSE;
 
-		LOG.log(level, "URI: {0}", request.getRequestURI());
+		String uri = request.getRequestURI();
+		LOG.log(level, "URI: {0}", uri);
+
+
+		
+//		URL url = request.getServletContext().getResource(uri);
+//		if (url == null) {
+//			LOG.log(Level.WARNING, "Resource {0} not exists", uri);
+//		} else {
+//			LOG.log(Level.INFO, "Resource \"{0}\" content is \"{1}\"", BSUtils.array2ObjectArray(uri, url.toString()));
+//		}
 
 		HttpSession session = request.getSession(false);
 

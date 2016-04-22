@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
 import cl.buildersoft.framework.util.BSDateTimeUtil;
+import cl.buildersoft.framework.util.BSUtils;
 
 // @ WebFilter(urlPatterns = { "/*" }, dispatcherTypes = { DispatcherType.REQUEST })
 public class LoadApplicationValuesFilter implements Filter {
@@ -28,8 +29,9 @@ public class LoadApplicationValuesFilter implements Filter {
 
 	public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-		LOG.log(Level.FINE, "Load Application Values Filter");
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
+		LOG.log(Level.FINE, "Load Application Values Filter, Context: {0}, {1}",
+				BSUtils.array2ObjectArray(request.getServletContext().getAttribute("CurrentContext").toString(), request.getRequestURI()));
 
 		Object dateFormatObject = request.getServletContext().getAttribute(DATE_FORMAT);
 		if (dateFormatObject == null) {

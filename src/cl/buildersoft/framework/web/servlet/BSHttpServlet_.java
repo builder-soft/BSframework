@@ -200,7 +200,7 @@ public class BSHttpServlet_ extends HttpServlet {
 				session.setAttribute(SESSION_NAME_COOKIE, token);
 			}
 
-			String lastContext = readCookieValue(request, LAST_CONTEXT_COOKIE);
+			String lastContext =  readLastContext(request);  // readCookieValue(request, LAST_CONTEXT_COOKIE);
 			String currentContext = getApplicationValue(request, "CurrentContext").toString();
 			LOG.log(Level.CONFIG, "CurrentContext: \"{0}\" LastConext: \"{1}\" for \"{2}\"",
 					BSUtils.array2ObjectArray(currentContext, lastContext, request.getRequestURL()));
@@ -212,7 +212,7 @@ public class BSHttpServlet_ extends HttpServlet {
 						Long start = System.currentTimeMillis();
 						readSessionDataFromDB(conn, session, token);
 						Long end = System.currentTimeMillis();
-						LOG.log(Level.INFO, "Readed session from DB in \"{0}\" miliseconds", (end - start));
+						LOG.log(Level.FINE, "Readed session from DB in \"{0}\" miliseconds", (end - start));
 					} catch (Exception e) {
 						LOG.log(Level.SEVERE, e.getMessage(), e);
 					} finally {
@@ -331,6 +331,10 @@ public class BSHttpServlet_ extends HttpServlet {
 		return readCookieValue(request, SESSION_NAME_COOKIE);
 	}
 
+	protected String readLastContext(HttpServletRequest request) {
+		return readCookieValue(request, LAST_CONTEXT_COOKIE);
+	}
+
 	private String readCookieValue(HttpServletRequest request, String cookieName) {
 		Cookie[] cookies = request.getCookies();
 		String out = null;
@@ -348,7 +352,10 @@ public class BSHttpServlet_ extends HttpServlet {
 			if (session != null) {
 				Object obj = session.getAttribute(cookieName);
 				if (obj != null) {
-					LOG.log(Level.FINE, "Reading cookie \"{0}\" from session", cookieName);
+					LOG.log(Level.FINE,
+							"Reading cookie \"{0}\" from session (Context: {1})",
+							BSUtils.array2ObjectArray(cookieName, request.getServletContext().getAttribute("CurrentContext")
+									.toString()));
 					out = (String) obj;
 				}
 			}

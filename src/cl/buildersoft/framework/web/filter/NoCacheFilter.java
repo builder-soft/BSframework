@@ -11,8 +11,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import cl.buildersoft.framework.util.BSUtils;
 
 // @ WebFilter(urlPatterns = { "/servlet/*", "/jsp/*" })
 public class NoCacheFilter implements Filter {
@@ -27,8 +29,12 @@ public class NoCacheFilter implements Filter {
 
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException,
 			ServletException {
-		LOG.log(Level.FINE, "No Cache Filter");
+		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+		
+		LOG.log(Level.FINE, "No Cache Filter, Context: {0}, {1}",
+				BSUtils.array2ObjectArray(request.getServletContext().getAttribute("CurrentContext").toString(), request.getRequestURI()));
+		
 		response.setDateHeader("Date", new Date().getTime());
 		response.setDateHeader("Expires", 0);
 		response.setHeader("Cache-Control", "no-cache, must-revalidate, s-maxage=0, proxy-revalidate, private");

@@ -13,13 +13,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cl.buildersoft.framework.util.BSUtils;
 import cl.buildersoft.framework.web.servlet.BSHttpServlet_;
 
 // @ WebFilter(dispatcherTypes = { DispatcherType.REQUEST }, urlPatterns = { "/servlet/*" })
-public class SessionFilter implements Filter {
-	private static final Logger LOG = Logger.getLogger(SessionFilter.class.getName());
+public class RestoreSessionFilter implements Filter {
+	private static final Logger LOG = Logger.getLogger(RestoreSessionFilter.class.getName());
 
-	public SessionFilter() {
+	public RestoreSessionFilter() {
 	}
 
 	public void destroy() {
@@ -31,7 +32,9 @@ public class SessionFilter implements Filter {
 	public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) rq;
 		HttpServletResponse response = (HttpServletResponse) rs;
-		LOG.log(Level.FINE, "Session Filter");
+		
+		LOG.log(Level.CONFIG, "Session Filter, Context: {0}, {1}",
+				BSUtils.array2ObjectArray(request.getServletContext().getAttribute("CurrentContext").toString(), request.getRequestURI()));
 		// request.getSession(true);
 
 		BSHttpServlet_ su = new BSHttpServlet_();

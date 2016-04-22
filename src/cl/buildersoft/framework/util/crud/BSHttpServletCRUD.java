@@ -34,16 +34,22 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BSTableConfig table = getBSTableConfig(request);
 
-		String uri = null; //request.getServletContext().getAttribute("DALEA_CONTEXT").toString(); // request.getRequestURI().substring(request.getContextPath().length());
-//		LOG.log(Level.FINE, request.getRequestURI().substring(request.getContextPath().length()));
-//		LOG.log(Level.FINE, request.getRequestURI());
-//		LOG.log(Level.FINE, request.getServletContext().getInitParameter("CurrentContext"));
+		String uri = null; // request.getServletContext().getAttribute("DALEA_CONTEXT").toString();
+							// //
+							// request.getRequestURI().substring(request.getContextPath().length());
+		// LOG.log(Level.FINE,
+		// request.getRequestURI().substring(request.getContextPath().length()));
+		// LOG.log(Level.FINE, request.getRequestURI());
+		// LOG.log(Level.FINE,
+		// request.getServletContext().getInitParameter("CurrentContext"));
 
-//		uri = request.getRequestURI();
+		// uri = request.getRequestURI();
 		uri = request.getRequestURI().substring(request.getContextPath().length());
 
-		table.setContext(request.getServletContext().getAttribute("CurrentContext").toString());
-		
+		String currentContext = request.getServletContext().getAttribute("CurrentContext").toString();
+		String lastContext = readLastContext(request);
+		table.setContext(currentContext);
+
 		verifyContextOfActions(table.getActions());
 
 		table.setUri(uri);
@@ -53,7 +59,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 			session.setAttribute("BSTable", table);
 		}
 
-		forward(request, response, "/servlet/common/LoadTable", false);
+		forward(request, response, "/servlet/common/LoadTable", !lastContext.equals(currentContext));
 
 	}
 

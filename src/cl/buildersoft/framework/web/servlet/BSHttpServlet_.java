@@ -168,7 +168,7 @@ public class BSHttpServlet_ extends HttpServlet {
 		BSConnectionFactory cf = new BSConnectionFactory();
 		Connection conn = cf.getConnection();
 		try {
-			saveSessionToDB(conn, session, true);
+			saveSessionToDB(conn, request, true);
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, e.getMessage(), e);
 			throw new BSSystemException(e);
@@ -200,7 +200,8 @@ public class BSHttpServlet_ extends HttpServlet {
 				session.setAttribute(SESSION_NAME_COOKIE, token);
 			}
 
-			String lastContext =  readLastContext(request);  // readCookieValue(request, LAST_CONTEXT_COOKIE);
+			String lastContext = readLastContext(request); // readCookieValue(request,
+															// LAST_CONTEXT_COOKIE);
 			String currentContext = getApplicationValue(request, "CurrentContext").toString();
 			LOG.log(Level.CONFIG, "CurrentContext: \"{0}\" LastConext: \"{1}\" for \"{2}\"",
 					BSUtils.array2ObjectArray(currentContext, lastContext, request.getRequestURL()));
@@ -241,7 +242,7 @@ public class BSHttpServlet_ extends HttpServlet {
 				Connection conn = cf.getConnection();
 				try {
 					// saveSessionToDB(conn, session, sessionId);
-					saveSessionToDB(conn, session, false);
+					saveSessionToDB(conn, request, false);
 				} catch (Exception e) {
 					LOG.log(Level.SEVERE, e.getMessage(), e);
 				} finally {
@@ -287,12 +288,12 @@ public class BSHttpServlet_ extends HttpServlet {
 
 	}
 
-	private SessionBean saveSessionToDB(Connection conn, HttpSession session, Boolean createIfNotExists) {
+	private SessionBean saveSessionToDB(Connection conn, HttpServletRequest request, Boolean createIfNotExists) {
 		SessionBean sessionBean = new SessionBean();
 		SessionDataBean sessionDataBean = null;
 		BSBeanUtils bu = new BSBeanUtils();
 
-		String token = session.getAttribute(SESSION_NAME_COOKIE).toString();
+		String token = readTokenValue(request); // session.getAttribute(SESSION_NAME_COOKIE).toString();
 
 		// sessionBean.setSessionId(sessionId);
 		Boolean foundIt = bu.search(conn, sessionBean, "cToken=?", token);
@@ -303,6 +304,7 @@ public class BSHttpServlet_ extends HttpServlet {
 			}
 			bu.save(conn, sessionBean);
 
+			HttpSession session = request.getSession(false);
 			Enumeration<String> names = session.getAttributeNames();
 			String name = null;
 

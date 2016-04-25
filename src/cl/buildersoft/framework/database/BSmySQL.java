@@ -20,7 +20,7 @@ import cl.buildersoft.framework.util.crud.BSPaging;
 import cl.buildersoft.framework.util.crud.BSTableConfig;
 
 public class BSmySQL extends BSDataUtils {
-	 CallableStatement callableStatement;
+	CallableStatement callableStatement;
 
 	private final static Logger LOG = Logger.getLogger(BSmySQL.class.getName());
 
@@ -169,7 +169,7 @@ public class BSmySQL extends BSDataUtils {
 		String sqlStatement = getSQL4SP(name, parameter);
 
 		ResultSet out = null;
-//		callableStatement = null;
+		// callableStatement = null;
 		try {
 			callableStatement = conn.prepareCall(sqlStatement);
 			parametersToStatement(parameter, callableStatement);
@@ -192,8 +192,11 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "Error on '" + name + "' width " + parameter.toString(), e);
-
+			if (parameter == null) {
+				LOG.log(Level.SEVERE, "Error on '" + name + "' widthout parameters", e);
+			} else {
+				LOG.log(Level.SEVERE, "Error on '" + name + "' width " + parameter.toString(), e);
+			}
 			throw new BSDataBaseException(e);
 		}
 		return out;
@@ -202,7 +205,8 @@ public class BSmySQL extends BSDataUtils {
 	private String getSQL4SP(String name, List<Object> parameter) {
 		String questionMarks = getQuestionMarks(parameter);
 		String sqlStatement = null;
-		if (questionMarks != null) {
+		if (questionMarks != null /** && questionMarks.length() > 0 */
+		) {
 			sqlStatement = "{call " + name + "(" + questionMarks + ")}";
 		} else {
 			sqlStatement = "{call " + name + "}";
@@ -301,6 +305,7 @@ public class BSmySQL extends BSDataUtils {
 
 		return out;
 	}
+
 	public void closeSQL() {
 		super.closeSQL();
 		if (this.callableStatement != null) {

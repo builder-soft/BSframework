@@ -193,7 +193,7 @@ public class BSmySQL extends BSDataUtils {
 			}
 		} catch (SQLException e) {
 			if (parameter == null) {
-				LOG.log(Level.SEVERE, "Error on '" + name + "' widthout parameters", e);
+				LOG.log(Level.SEVERE, "Error on '" + name + "' widthout parameters.", e);
 			} else {
 				LOG.log(Level.SEVERE, "Error on '" + name + "' width " + parameter.toString(), e);
 			}

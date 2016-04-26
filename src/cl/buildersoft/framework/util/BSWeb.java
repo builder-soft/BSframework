@@ -350,13 +350,13 @@ public class BSWeb {
 		Boolean haveInfo = Boolean.FALSE;
 		try {
 			ResultSetMetaData metaData = rs.getMetaData();
-			out.append("<table class='cList' cellpadding='0' cellspacing='0'>");
-			out.append("<tr>");
+			out.append("<table class='table table-striped table-bordered table-hover table-condensed table-responsive'>");
+			out.append("<thead><tr>");
 			Integer index = 1, indexRow = 1;
 			for (index = 1; index <= metaData.getColumnCount(); index++) {
-				out.append("<td class='cHeadTD' nowrap align='center'>" + metaData.getColumnLabel(index) + "</td>");
+				out.append("<th>" + metaData.getColumnLabel(index) + "</th>");
 			}
-			out.append("</tr>\n");
+			out.append("</tr></thead><tbody>\n");
 
 			while (rs.next()) {
 				out.append("<tr>");
@@ -369,21 +369,23 @@ public class BSWeb {
 					String data = null;
 					data = rs.getString(index);
 					value = formatData(conn, data, type);
-					out.append("<td class='" + style + "' nowrap align='" + value[1] + "'>" + value[0] + "</td>");
+					out.append("<td>" + value[0] + "</td>");
+//					out.append("<td class='" + style + "' nowrap align='" + value[1] + "'>" + value[0] + "</td>");
 				}
 
 				haveInfo = Boolean.TRUE;
-				out.append("</tr>\n");
+				out.append("</tr></tbody>\n");
 
 			}
 			if (!haveInfo) {
-				out.append("<tr><td class='cDataTD' colspan='" + metaData.getColumnCount() + "'>No hay información</td></tr>");
+				out.append("<tr><td>No hay información</td></tr>");
+//				out.append("<tr><td class='cDataTD' colspan='" + metaData.getColumnCount() + "'>No hay información</td></tr>");
 			}
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 
-		out.append("</tr>");
+		out.append("</table>");
 		return out.toString();
 	}
 

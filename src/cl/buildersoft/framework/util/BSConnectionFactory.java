@@ -120,8 +120,7 @@ para saber a cual base de datos se debe conectar el datasource.
 	private String[] getDataConnection(String dsName) {
 		String[] out = new String[4];
 
-		String fileConfigPath = System.getenv("BS_PATH") + File.separatorChar + ".." + File.separatorChar + "META-INF"
-				+ File.separatorChar + "context.xml";
+		String fileConfigPath = getContextPathFile();
 
 		LOG.log(Level.CONFIG, "Configuration file is {0}", fileConfigPath);
 
@@ -147,5 +146,13 @@ para saber a cual base de datos se debe conectar el datasource.
 			LOG.log(Level.SEVERE, "Error reading configuration", e);
 		}
 		return out;
+	}
+
+	private String getContextPathFile() {
+		return System.getenv("CATALINA_HOME") + File.separatorChar + "conf" + File.separatorChar + "context.xml";
+
+		// return System.getenv("BS_PATH") + File.separatorChar + ".." +
+		// File.separatorChar + "META-INF"
+		// + File.separatorChar + "context.xml";
 	}
 }

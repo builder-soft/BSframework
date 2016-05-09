@@ -19,4 +19,9 @@ public class Menu implements Serializable {
 	public List<Submenu> list() {
 		return this.submenuList;
 	}
+
+	@Override
+	public String toString() {
+		return "Menu [submenuList=" + submenuList + "]";
+	}
 }

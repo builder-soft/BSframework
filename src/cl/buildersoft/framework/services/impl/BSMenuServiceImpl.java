@@ -135,21 +135,24 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 
 	private String getDomainAttribtesAsList(Map<String, DomainAttribute> domainAttribute) {
 		String out = "(o.cContext IS NULL OR o.cContext IN('";
+		Boolean doIn = false;
 
-		Iterator<String> it = domainAttribute.keySet().iterator();
-		while (it.hasNext()) {
-			String key = (String) it.next();
+		Iterator<String> iterator = domainAttribute.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String) iterator.next();
 			// System.out.println("Clave: " + key + " -> Valor: " +
 			// domainAttribute.get(key));
 
 			if (Boolean.parseBoolean(domainAttribute.get(key).getValue())) {
+				doIn = true;
 				out += (key + "_CONTEXT',");
 			}
 
 		}
-		out = out.substring(0, out.length() - 2);
-		// 'ALBIZIA_CONTEXT','TIMECTRL_CONTEXT',NULL))";
-
+		if (doIn) {
+			out = out.substring(0, out.length() - 2);
+			// 'ALBIZIA_CONTEXT','TIMECTRL_CONTEXT',NULL))";
+		}
 		return out.concat("')) AND ");
 	}
 

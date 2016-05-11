@@ -136,7 +136,7 @@ public class BSDataUtils {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameters, preparedStatement);
 			out = preparedStatement.executeQuery();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			LOG.log(Level.SEVERE, "SQL was: \n{0}\nand parameters were {1}", BSUtils.array2ObjectArray(sql, parameters));
 			throw new BSDataBaseException(e);
 		}

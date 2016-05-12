@@ -151,11 +151,11 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 		}
 		if (doIn) {
 			out = out.substring(0, out.length() - 2);
-			// 'ALBIZIA_CONTEXT','TIMECTRL_CONTEXT',NULL))";
+
 			out = out.concat("')) AND ");
 		} else {
-			out = "";
-//			out = out.concat("'')) AND ");
+			out = "o.cContext IS NULL AND";
+			// out = out.concat("'')) AND ");
 		}
 		return out;
 	}

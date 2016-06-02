@@ -90,7 +90,7 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 
 		if (parent == null && rol == null) {
 			sql = "SELECT cId AS cOption ";
-			sql += "FROM tOption ";
+			sql += "FROM tOption AS o ";
 			sql += "WHERE " + modules + " cParent IS NULL";
 			if (!isAdmin) {
 				sql += " AND cIsAdmin=FALSE";
@@ -99,7 +99,7 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 		} else if (parent == null && rol != null) {
 			sql = "SELECT cOption ";
 			sql += "FROM tR_RolOption r ";
-			sql += "LEFT JOIN tOption o ON r.cOption=o.cId ";
+			sql += "LEFT JOIN tOption AS o ON r.cOption=o.cId ";
 			sql += "WHERE " + modules + " o.cParent IS NULL AND r.cRol=?";
 			if (!isAdmin) {
 				sql += " AND cIsAdmin=FALSE";
@@ -107,7 +107,7 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 			prms = array2List(rol.getId());
 		} else if (parent != null && rol == null) {
 			sql = "SELECT cId AS cOption ";
-			sql += "FROM tOption ";
+			sql += "FROM tOption AS o ";
 			sql += "WHERE " + modules + " cParent=?";
 			if (!isAdmin) {
 				sql += " AND cIsAdmin=FALSE";
@@ -116,7 +116,7 @@ public class BSMenuServiceImpl extends BSDataUtils implements BSMenuService {
 		} else if (parent != null && rol != null) {
 			sql = "SELECT cOption ";
 			sql += "FROM tR_RolOption r ";
-			sql += "LEFT JOIN tOption o ON r.cOption=o.cId ";
+			sql += "LEFT JOIN tOption AS o ON r.cOption=o.cId ";
 			sql += "WHERE " + modules + " o.cParent=? AND r.cRol=?";
 			if (!isAdmin) {
 				sql += " AND cIsAdmin=FALSE";

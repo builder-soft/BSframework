@@ -1,7 +1,6 @@
 package cl.buildersoft.framework.web.servlet;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,8 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import cl.buildersoft.framework.web.filter.RestoreSessionFilter;
 
 /**
  * Servlet implementation class NotFoundServlet
@@ -29,13 +26,10 @@ public class NotFoundServlet extends BSHttpServlet_ {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LOG.log(Level.CONFIG, "Strating NotFoundServlet service");
-		if (!"DALEA_CONTEXT".equals(getApplicationValue(request, "CurrentContext"))) {
-			String daleaContext = getApplicationValue(request, "DALEA_CONTEXT").toString();
-			String url = daleaContext + "/servlet/RedirectServlet?URL=" + URLEncoder.encode(NOT_FOUND_PAGE, "UTF-8");
-			redirect(request, response, url);
-		} else {
-			forward(request, response, NOT_FOUND_PAGE, false);
-		}
+
+		forwardOrRedirect(request, response, NOT_FOUND_PAGE);
+
 	}
+
 
 }

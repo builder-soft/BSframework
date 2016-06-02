@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Enumeration;
@@ -139,6 +141,19 @@ public class BSHttpServlet_ extends HttpServlet {
 		updateSession(request, response);
 		prepareCookies(request, response);
 		response.sendRedirect(url);
+	}
+
+	protected void forwardOrRedirect(HttpServletRequest request, HttpServletResponse response, String url)
+			throws UnsupportedEncodingException, ServletException, IOException {
+		String currentContext = getApplicationValue(request, "CurrentContext").toString();
+
+		if (!"DALEA_CONTEXT".equals(currentContext)) {
+			String daleaContext = getApplicationValue(request, "DALEA_CONTEXT").toString();
+			String urlForRedirect = daleaContext + "/servlet/RedirectServlet?URL=" + URLEncoder.encode(url, "UTF-8");
+			redirect(request, response, urlForRedirect);
+		} else {
+			forward(request, response, url, false);
+		}
 	}
 
 	private void prepareCookies(HttpServletRequest request, HttpServletResponse response) {

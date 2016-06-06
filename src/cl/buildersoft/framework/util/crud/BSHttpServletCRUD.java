@@ -25,7 +25,11 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 
 	public abstract Semaphore setSemaphore(Connection conn, Object[] values);
 
+	protected abstract void preExecuteAction(BSTableConfig table, String action, Long userId);
+
 	protected abstract void configEventLog(BSTableConfig table, Long userId);
+
+	protected abstract void postExecuteAction(BSTableConfig table, String action, Long userId);
 
 	// public abstract String getBusinessClass();
 	// public abstract void writeEventLog(Connection conn, String action,
@@ -36,7 +40,8 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 		configEventLog(table, getCurrentUser(request).getId());
 
 		String uri = null; // request.getServletContext().getAttribute("DALEA_CONTEXT").toString();
-							// //
+							//
+							//
 							// request.getRequestURI().substring(request.getContextPath().length());
 		// LOG.log(Level.FINE,
 		// request.getRequestURI().substring(request.getContextPath().length()));
@@ -72,7 +77,6 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 				throw new BSProgrammerException("Action '" + action.getCode() + "' widthout context defined");
 			}
 		}
-
 	}
 
 	protected BSTableConfig initTable(HttpServletRequest request, String tableName) {

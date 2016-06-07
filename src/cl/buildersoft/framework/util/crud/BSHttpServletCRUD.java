@@ -25,11 +25,11 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 
 	public abstract Semaphore setSemaphore(Connection conn, Object[] values);
 
-	protected abstract void preExecuteAction(BSTableConfig table, String action, Long userId);
+	public abstract void preExecuteAction(BSTableConfig table, String action, Long userId);
 
 	protected abstract void configEventLog(BSTableConfig table, Long userId);
 
-	protected abstract void postExecuteAction(BSTableConfig table, String action, Long userId);
+	public abstract void postExecuteAction(BSTableConfig table, String action, Long userId);
 
 	// public abstract String getBusinessClass();
 	// public abstract void writeEventLog(Connection conn, String action,
@@ -89,8 +89,9 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 
 	protected BSTableConfig initTable(HttpServletRequest request, String database, String tableName, BSHttpServletCRUD servlet) {
 		String databaseName = null;
+		HttpSession session = request.getSession(false);
 		if (database == null) {
-			Domain domain = (Domain) request.getSession(false).getAttribute("Domain");
+			Domain domain = (Domain) session.getAttribute("Domain");
 			databaseName = domain.getDatabase();
 		} else {
 			databaseName = database;
@@ -103,7 +104,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
 		mysql.closeConnection(conn);
 
 		if (servlet != null) {
-			request.setAttribute("ServletManager", servlet);
+			session.setAttribute("ServletManager", servlet);
 		}
 		return table;
 	}

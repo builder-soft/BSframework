@@ -34,4 +34,9 @@ public class SessionDataBean extends BSBean {
 		this.data = data;
 	}
 
+	@Override
+	public String toString() {
+		return "SessionDataBean [Id=" + getId() + ", session=" + session + ", name=" + name + ", data=" + data + "]";
+	}
+
 }

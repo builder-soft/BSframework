@@ -1,8 +1,8 @@
 package cl.buildersoft.framework.util.crud;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -12,12 +12,11 @@ import javax.servlet.http.HttpSession;
 
 import cl.buildersoft.framework.beans.Domain;
 import cl.buildersoft.framework.database.BSmySQL;
-import cl.buildersoft.framework.exception.BSConfigurationException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 import cl.buildersoft.framework.type.Semaphore;
 import cl.buildersoft.framework.web.servlet.BSHttpServlet_;
 
-public abstract class BSHttpServletCRUD extends BSHttpServlet_ {
+public abstract class BSHttpServletCRUD extends BSHttpServlet_ implements Serializable {
 	private static final Logger LOG = Logger.getLogger(BSHttpServletCRUD.class.getName());
 	private static final long serialVersionUID = BSHttpServletCRUD.class.getName().hashCode();
 

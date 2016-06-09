@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -458,8 +459,13 @@ public class BSHttpServlet_ extends HttpServlet {
 					}
 
 					for (SessionDataBean current : sessionDataMap.values()) {
-						obj = stringToObject(current.getData());
-						session.setAttribute(current.getName(), obj);
+						try {
+							obj = stringToObject(current.getData());
+							session.setAttribute(current.getName(), obj);
+						} catch (Exception e) {
+							LOG.log(Level.SEVERE, "Error (" + e.getMessage() + ") processing '" + current.toString()
+									+ "' As object:'" + obj + "'", e);
+						}
 					}
 				}
 				/**

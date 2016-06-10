@@ -40,12 +40,13 @@ public class BSTableConfig implements Serializable {
 	private String script = "";
 
 	private String viewName = null;
-	private String saveSP = null;
+	private String insertSP = null;
 	private String deleteSP = null;
+	private Object[] insertExtParam = null;
 	private String where = null;
-	
+
 	private LogInfoBean logInfo[] = null;
-	
+
 	private List<Object[]> data = null;
 	private String context = null;
 
@@ -670,12 +671,12 @@ public class BSTableConfig implements Serializable {
 		return viewName != null;
 	}
 
-	public String getSaveSP() {
-		return saveSP;
+	public String getInsertSP() {
+		return insertSP;
 	}
 
-	public void setSaveSP(String saveSP) {
-		this.saveSP = saveSP;
+	public void setInsertSP(String insertSP) {
+		this.insertSP = insertSP;
 	}
 
 	public String getDeleteSP() {
@@ -733,7 +734,7 @@ public class BSTableConfig implements Serializable {
 		this.logInfo = Arrays.copyOf(this.logInfo, this.logInfo.length + 1);
 		// System.arraycopy(this.logInfo, 0, this.logInfo, 0,
 		// this.logInfo.length);
-		this.logInfo[this.logInfo.length-1] = logInfo;
+		this.logInfo[this.logInfo.length - 1] = logInfo;
 		// this.logInfo
 	}
 
@@ -766,4 +767,16 @@ public class BSTableConfig implements Serializable {
 		this.context = context;
 	}
 
+	public void addInsertExtParam(Object o) {
+		if (this.insertExtParam == null) {
+			this.insertExtParam = new Object[0];
+		}
+
+		this.insertExtParam = Arrays.copyOf(this.insertExtParam, this.insertExtParam.length + 1);
+		this.insertExtParam[this.insertExtParam.length - 1] = o;
+	}
+
+	public Object[] getInsertExtParam() {
+		return this.insertExtParam;
+	}
 }

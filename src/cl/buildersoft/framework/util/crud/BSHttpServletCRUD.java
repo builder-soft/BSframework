@@ -24,11 +24,11 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ implements Serial
 
 	public abstract Semaphore setSemaphore(Connection conn, Object[] values);
 
-	public abstract void preExecuteAction(BSTableConfig table, String action, Long userId);
+//	public abstract void preExecuteAction(BSTableConfig table, String action, Long userId);
 
 	protected abstract void configEventLog(BSTableConfig table, Long userId);
 
-	public abstract void postExecuteAction(BSTableConfig table, String action, Long userId);
+//	public abstract void postExecuteAction(BSTableConfig table, String action, Long userId);
 
 	// public abstract String getBusinessClass();
 	// public abstract void writeEventLog(Connection conn, String action,
@@ -103,7 +103,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ implements Serial
 		mysql.closeConnection(conn);
 
 		if (servlet != null) {
-			session.setAttribute("ServletManager", servlet);
+//			session.setAttribute("ServletManager", servlet);
 		}
 		return table;
 	}

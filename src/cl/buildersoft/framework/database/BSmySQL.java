@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.util.BSDataUtils;
@@ -22,7 +22,7 @@ import cl.buildersoft.framework.util.crud.BSTableConfig;
 public class BSmySQL extends BSDataUtils {
 	CallableStatement callableStatement;
 
-	private final static Logger LOG = Logger.getLogger(BSmySQL.class.getName());
+	private final static Logger LOG = LogManager.getLogger(BSmySQL.class);
 
 	/**
 	 * <code>
@@ -87,8 +87,8 @@ public class BSmySQL extends BSDataUtils {
 				}
 			}
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "Error executing query in callComplexSP, the commans name is '" + name + "', parameters are "
-					+ breakDown(parameter), e);
+			LOG.error(String.format("Error executing query in callComplexSP, the commans name is '%s', parameters are %s", name,
+					breakDown(parameter)), e);
 			throw new BSDataBaseException(e);
 		} finally {
 			if (localCallableStatement != null) {
@@ -150,7 +150,7 @@ public class BSmySQL extends BSDataUtils {
 			out = localCallableStatement.getString(1);
 
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "Error executing function en callFunction", e);
+			LOG.error("Error executing function en callFunction", e);
 			throw new BSDataBaseException(e);
 		} finally {
 			if (localCallableStatement != null) {
@@ -193,9 +193,9 @@ public class BSmySQL extends BSDataUtils {
 			}
 		} catch (SQLException e) {
 			if (parameter == null) {
-				LOG.log(Level.SEVERE, "Error on '" + name + "' widthout parameters.", e);
+				LOG.error(String.format("Error on '%s' widthout parameters.", name), e);
 			} else {
-				LOG.log(Level.SEVERE, "Error on '" + name + "' width " + parameter.toString(), e);
+				LOG.error(String.format("Error on '%s' width %s", name, parameter.toString()), e);
 			}
 			throw new BSDataBaseException(e);
 		}
@@ -278,6 +278,7 @@ public class BSmySQL extends BSDataUtils {
 		}
 	}
 
+	/**<code>
 	private List<Object[]> resultSet2Matrix2(ResultSet rs) {
 		List<Object[]> out = new ArrayList<Object[]>();
 
@@ -305,7 +306,7 @@ public class BSmySQL extends BSDataUtils {
 
 		return out;
 	}
-
+</code>*/
 	public void closeSQL() {
 		super.closeSQL();
 		if (this.callableStatement != null) {

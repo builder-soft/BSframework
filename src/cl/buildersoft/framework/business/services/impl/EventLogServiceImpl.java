@@ -6,9 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import cl.buildersoft.framework.beans.Event;
 import cl.buildersoft.framework.beans.EventBean;
 import cl.buildersoft.framework.beans.EventType;
@@ -20,7 +19,7 @@ import cl.buildersoft.framework.util.BSDateTimeUtil;
 import cl.buildersoft.framework.util.BSUtils;
 
 public class EventLogServiceImpl implements EventLogService {
-	private static final Logger LOG = Logger.getLogger(EventLogServiceImpl.class.getName());
+	private static final Logger LOG = LogManager.getLogger(EventLogServiceImpl.class);
 
 	@Override
 	public void writeEntry(Connection conn, Long user, String eventTypeKey, String what, Object... params) {
@@ -33,9 +32,8 @@ public class EventLogServiceImpl implements EventLogService {
 			eventType.setName(eventTypeKey);
 			bu.insert(conn, eventType);
 
-			LOG.log(Level.WARNING,
-					"Record not found in table tEventType. The record is created with key {0}, this description should be updated.",
-					eventTypeKey);
+			LOG.warn(String.format("Record not found in table tEventType. "
+					+ "The record is created with key %s, this description should be updated.", eventTypeKey));
 		}
 
 		event.setEventType(eventType.getId());
@@ -78,7 +76,7 @@ public class EventLogServiceImpl implements EventLogService {
 	private List<EventBean> executeSP(Connection conn, String spName, List<Object> params) {
 		BSmySQL mysql = new BSmySQL();
 
-		LOG.log(Level.FINE, "Parameters for search are: {0}", params);
+		LOG.trace(String.format("Parameters for search are: %s", params.toString()));
 		List<EventBean> out = new ArrayList<EventBean>();
 		ResultSet rs = mysql.callSingleSP(conn, spName, params);
 

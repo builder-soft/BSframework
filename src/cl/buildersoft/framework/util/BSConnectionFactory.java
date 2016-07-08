@@ -4,8 +4,8 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,7 +33,7 @@ para saber a cual base de datos se debe conectar el datasource.
 
 </code>
 	 */
-	private static final Logger LOG = Logger.getLogger(BSConnectionFactory.class.getName());
+	private static final Logger LOG = LogManager.getLogger(BSConnectionFactory.class);
 
 	public void closeConnection(Connection conn) {
 		if (conn != null) {
@@ -42,7 +42,7 @@ para saber a cual base de datos se debe conectar el datasource.
 					conn.close();
 				}
 			} catch (SQLException e) {
-				LOG.log(Level.SEVERE, "Can't close connection", e);
+				LOG.error("Can't close connection", e);
 				throw new BSDataBaseException(e);
 			}
 		}
@@ -80,7 +80,7 @@ para saber a cual base de datos se debe conectar el datasource.
 		try {
 			Class.forName(driverName);
 		} catch (ClassNotFoundException e) {
-			LOG.log(Level.SEVERE, "Error to load driver {0} in class BSConnectionmanager", driverName);
+			LOG.error(String.format("Error to load driver %s", driverName));
 			throw new BSConfigurationException(e);
 		}
 		// String url = "jdbc:mysql://" + serverName + "/" + database;
@@ -88,11 +88,10 @@ para saber a cual base de datos se debe conectar el datasource.
 		try {
 			conn = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "Error connecting to database using MySQL driver={0} url={1} user={2} pass={3}",
-					BSUtils.array2ObjectArray(driverName, url, username, password));
+			LOG.error(String.format("Error connecting to database using MySQL driver=%s url=%s user=%s pass=%s", driverName, url,
+					username, password));
 			throw new BSDataBaseException(e);
 		}
-
 		return conn;
 	}
 
@@ -104,14 +103,11 @@ para saber a cual base de datos se debe conectar el datasource.
 			DataSource ds = (DataSource) envContext.lookup("jdbc/" + dsName);
 			conn = ds.getConnection();
 		} catch (SQLException e) {
-			LOG.logp(Level.SEVERE, BSDataUtils.class.getName(), "getConnectionByDataSource",
-					"Error connecting width DataSource (SQLException)", e);
+			LOG.error(String.format("Error connecting width DataSource (SQLException) for %s", dsName));
 			throw new BSConfigurationException(e);
 		} catch (NamingException e) {
-			LOG.logp(Level.WARNING, BSDataUtils.class.getName(), "getConnectionByDataSource",
-					"Error connecting width DataSource (NamingException)");
+			LOG.warn(String.format("Error connecting width DataSource (NamingException) for %s", dsName));
 			throw new BSConfigurationException(e);
-			// return getConnection(dsName);
 		}
 
 		return conn;
@@ -122,7 +118,7 @@ para saber a cual base de datos se debe conectar el datasource.
 
 		String fileConfigPath = getContextPathFile();
 
-		LOG.log(Level.CONFIG, "Configuration file is {0}", fileConfigPath);
+		LOG.info(String.format("Configuration file is %s", fileConfigPath));
 
 		try {
 			// Document contextFile = DocumentHelper.parseText(fileConfigPath);
@@ -140,10 +136,10 @@ para saber a cual base de datos se debe conectar el datasource.
 			out[3] = resourceNode.attributeValue("password");
 
 		} catch (DocumentException e) {
-			LOG.log(Level.SEVERE, "Cant parse XML file {0}", fileConfigPath);
+			LOG.error(String.format("Cant parse XML file %s", fileConfigPath));
 			throw new BSConfigurationException(e);
 		} catch (Error e) {
-			LOG.log(Level.SEVERE, "Error reading configuration", e);
+			LOG.error("Error reading configuration", e);
 		}
 		return out;
 	}

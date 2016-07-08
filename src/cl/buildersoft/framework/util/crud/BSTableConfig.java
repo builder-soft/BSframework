@@ -11,8 +11,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import cl.buildersoft.framework.beans.LogInfoBean;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
@@ -20,10 +21,9 @@ import cl.buildersoft.framework.dataType.BSDataTypeFactory;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
-import cl.buildersoft.framework.util.BSUtils;
 
 public class BSTableConfig implements Serializable {
-	private final static Logger LOG = Logger.getLogger(BSTableConfig.class.getName());
+	private final static Logger LOG = LogManager.getLogger(BSTableConfig.class);
 	private static final long serialVersionUID = 5244852621619707464L;
 	private String database = null;
 	private String tableName = null;
@@ -412,11 +412,9 @@ public class BSTableConfig implements Serializable {
 	}
 
 	private void setRealType(ResultSetMetaData metaData, Integer i, BSField field) {
-
 		String typeName;
 		try {
-			LOG.log(Level.FINE, "{0} - {1}",
-					BSUtils.array2ObjectArray(metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
+			LOG.trace(String.format("Reading column type %s - %s", metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
 			typeName = metaData.getColumnTypeName(i);
 
 		} catch (SQLException e) {
@@ -616,7 +614,7 @@ public class BSTableConfig implements Serializable {
 	public BSField getField(String name) {
 		BSField out = this.fieldsMap.get(name);
 		if (out == null) {
-			LOG.log(Level.SEVERE, "Field {0} not found, the fields list is {1}", BSUtils.array2ObjectArray(name, this.fieldsMap));
+			LOG.debug(String.format("Field %s not found, the fields list is %s", name, this.fieldsMap.toString()));
 			throw new BSProgrammerException("Field '" + name + "' not found");
 		}
 		return out;

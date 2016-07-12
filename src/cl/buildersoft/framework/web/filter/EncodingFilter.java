@@ -1,8 +1,9 @@
 package cl.buildersoft.framework.web.filter;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -18,7 +19,7 @@ import cl.buildersoft.framework.util.BSUtils;
 
 // @ WebFilter(urlPatterns = { "/*" }, dispatcherTypes = { DispatcherType.REQUEST })
 public class EncodingFilter implements Filter {
-	private static final Logger LOG = Logger.getLogger(EncodingFilter.class.getName());
+	private static final Logger LOG = LogManager.getLogger(EncodingFilter .class);
 	String encoding = null;
 
 	public void init(FilterConfig fConfig) throws ServletException {
@@ -29,9 +30,9 @@ public class EncodingFilter implements Filter {
 			ServletException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-		LOG.log(Level.FINE,
-				"In Enconding Filter, Context: {0}, {1}",
-				BSUtils.array2ObjectArray(request.getServletContext().getAttribute("CurrentContext").toString(),
+		LOG.trace(String.format(
+				"In Enconding Filter, Context: %s, %s",
+				request.getServletContext().getAttribute("CurrentContext").toString(),
 						request.getRequestURI()));
 
 		if (this.encoding != null) {
@@ -47,7 +48,4 @@ public class EncodingFilter implements Filter {
 	@Override
 	public void destroy() {
 	}
-
-	
-
 }

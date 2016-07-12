@@ -414,7 +414,7 @@ public class BSTableConfig implements Serializable {
 	private void setRealType(ResultSetMetaData metaData, Integer i, BSField field) {
 		String typeName;
 		try {
-			LOG.trace(String.format("Reading column type %s - %s", metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
+//			LOG.trace(String.format("Reading column type %s - %s", metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
 			typeName = metaData.getColumnTypeName(i);
 
 		} catch (SQLException e) {

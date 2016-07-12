@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -24,6 +22,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -35,11 +36,11 @@ import cl.buildersoft.framework.database.BSBeanUtils;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSSystemException;
 import cl.buildersoft.framework.util.BSConnectionFactory;
-import cl.buildersoft.framework.util.BSUtils;
 
 // D:\temp\5\20160304\app-web-master\app-web-master\sso\src\cl\buildersoft\sso\filter
 public class BSHttpServlet_ extends HttpServlet {
-	private static final Logger LOG = Logger.getLogger(BSHttpServlet_.class.getName());
+	private static final Logger LOG = LogManager.getLogger(BSHttpServlet_.class);
+
 	private static final long serialVersionUID = 7807647668104655759L;
 	private static final String SESSION_NAME_COOKIE = "SESSION_SSO";
 	private static final String LAST_CONTEXT_COOKIE = "LAST_CONTEXT";
@@ -107,7 +108,7 @@ public class BSHttpServlet_ extends HttpServlet {
 		String name = null;
 		while (names.hasMoreElements()) {
 			name = (String) names.nextElement();
-			LOG.log(Level.CONFIG, "Name={0}", request.getParameter(name));
+			LOG.info(String.format("Name=%s, value=%s", name, request.getParameter(name)));
 		}
 	}
 
@@ -185,7 +186,7 @@ public class BSHttpServlet_ extends HttpServlet {
 		try {
 			saveSessionToDB(conn, request, true);
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e);
 			throw new BSSystemException(e);
 		} finally {
 			cf.closeConnection(conn);
@@ -197,11 +198,11 @@ public class BSHttpServlet_ extends HttpServlet {
 		String token = readTokenValue(request);
 
 		if (token == null) {
-			LOG.log(Level.WARNING, "Cookie not found, illegal access");
+			LOG.warn(String.format("Cookie '%s' not found on client, illegal access", SESSION_NAME_COOKIE));
 		} else {
 			HttpSession session = request.getSession(false);
 			if (session == null) {
-				LOG.log(Level.WARNING, "Session is null, creating new");
+				LOG.warn("Session is null, creating new");
 				session = request.getSession(true);
 			}
 			/**
@@ -218,8 +219,8 @@ public class BSHttpServlet_ extends HttpServlet {
 			String lastContext = readLastContext(request); // readCookieValue(request,
 															// LAST_CONTEXT_COOKIE);
 			String currentContext = getApplicationValue(request, "CurrentContext").toString();
-			LOG.log(Level.CONFIG, "CurrentContext: \"{0}\" LastConext: \"{1}\" for \"{2}\"",
-					BSUtils.array2ObjectArray(currentContext, lastContext, request.getRequestURL()));
+			LOG.info(String.format("CurrentContext:'%s' LastConext:'%s' for '%s'", currentContext, lastContext,
+					request.getRequestURL()));
 			if (lastContext != null) {
 				if (!lastContext.equals(currentContext)) {
 					BSConnectionFactory cf = new BSConnectionFactory();
@@ -228,9 +229,9 @@ public class BSHttpServlet_ extends HttpServlet {
 						Long start = System.currentTimeMillis();
 						readSessionDataFromDB(conn, session, token);
 						Long end = System.currentTimeMillis();
-						LOG.log(Level.FINE, "Readed session from DB in \"{0}\" miliseconds", (end - start));
+						LOG.trace(String.format("Readed session from DB in \"%d\" miliseconds", (end - start)));
 					} catch (Exception e) {
-						LOG.log(Level.SEVERE, e.getMessage(), e);
+						LOG.error(e);
 					} finally {
 						cf.closeConnection(conn);
 					}
@@ -259,7 +260,7 @@ public class BSHttpServlet_ extends HttpServlet {
 					// saveSessionToDB(conn, session, sessionId);
 					saveSessionToDB(conn, request, false);
 				} catch (Exception e) {
-					LOG.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e);
 				} finally {
 					cf.closeConnection(conn);
 				}
@@ -357,22 +358,24 @@ public class BSHttpServlet_ extends HttpServlet {
 		String out = null;
 
 		if (cookies != null) {
+			LOG.trace("There are cookies");
 			for (Cookie currentCookie : cookies) {
+				LOG.trace(String.format("Comparing cookies %s==%s?", cookieName, currentCookie.getName()));
 				if (currentCookie.getName().equals(cookieName)) {
 					out = currentCookie.getValue();
+					LOG.trace(String.format("Found, exiting width '%s'", out));
 					break;
 				}
 			}
 		}
 		if (out == null) {
+			LOG.trace(String.format("Cookie '%s' not found in cookie list", cookieName));
 			HttpSession session = request.getSession(false);
 			if (session != null) {
 				Object obj = session.getAttribute(cookieName);
 				if (obj != null) {
-					LOG.log(Level.FINE,
-							"Reading cookie \"{0}\" from session (Context: {1})",
-							BSUtils.array2ObjectArray(cookieName, request.getServletContext().getAttribute("CurrentContext")
-									.toString()));
+					LOG.trace(String.format("Reading cookie '%s' from session (Context: %s)", cookieName, request
+							.getServletContext().getAttribute("CurrentContext").toString()));
 					out = (String) obj;
 				}
 			}
@@ -387,7 +390,7 @@ public class BSHttpServlet_ extends HttpServlet {
 			oos = new ObjectOutputStream(baos);
 			oos.writeObject(obj);
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e);
 			throw new BSSystemException(e);
 		}
 		byte[] userAsBytes = baos.toByteArray();
@@ -454,7 +457,6 @@ public class BSHttpServlet_ extends HttpServlet {
 							session.setAttribute(record.getName(), obj);
 						}
 						// session.removeAttribute(name);
-
 					}
 
 					for (SessionDataBean current : sessionDataMap.values()) {
@@ -462,16 +464,17 @@ public class BSHttpServlet_ extends HttpServlet {
 							obj = stringToObject(current.getData());
 							session.setAttribute(current.getName(), obj);
 						} catch (Exception e) {
-							LOG.log(Level.SEVERE, "Error (" + e.getMessage() + ") processing '" + current.toString()
-									+ "' As object:'" + obj + "'", e);
+							LOG.error(String.format("Error (%s) processing '%s' as object:'%s'", e.getMessage(),
+									current.toString(), obj), e);
 						}
 					}
 				}
 				/**
-				 * <code>				for (SessionDataBean record : objectList) {
-					obj = stringToObject(record.getData());
-					session.setAttribute(record.getName(), obj);
-	}
+				 * <code>
+for (SessionDataBean record : objectList) {
+	obj = stringToObject(record.getData());
+	session.setAttribute(record.getName(), obj);
+}
  </code>
 				 */
 			}

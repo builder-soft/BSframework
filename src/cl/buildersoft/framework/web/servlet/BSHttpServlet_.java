@@ -219,7 +219,7 @@ public class BSHttpServlet_ extends HttpServlet {
 			String lastContext = readLastContext(request); // readCookieValue(request,
 															// LAST_CONTEXT_COOKIE);
 			String currentContext = getApplicationValue(request, "CurrentContext").toString();
-			LOG.info(String.format("CurrentContext:'%s' LastConext:'%s' for '%s'", currentContext, lastContext,
+			LOG.debug(String.format("CurrentContext:'%s' LastConext:'%s' for '%s'", currentContext, lastContext,
 					request.getRequestURL()));
 			if (lastContext != null) {
 				if (!lastContext.equals(currentContext)) {
@@ -290,6 +290,7 @@ public class BSHttpServlet_ extends HttpServlet {
 		Connection conn = cf.getConnection();
 		try {
 			if (bu.search(conn, sessionBean, "cToken=?", token)) {
+				@SuppressWarnings("unchecked")
 				List<SessionDataBean> dataList = (List<SessionDataBean>) bu.list(conn, sessionDataBean, "cSession=?",
 						sessionBean.getId());
 
@@ -436,6 +437,7 @@ public class BSHttpServlet_ extends HttpServlet {
 
 		synchronized (this) {
 			if (bu.search(conn, sessionBean, "cToken=?", token)) {
+				@SuppressWarnings("unchecked")
 				List<SessionDataBean> objectList = (List<SessionDataBean>) bu.list(conn, sessionDataBean, "cSession=?",
 						sessionBean.getId());
 				Object obj = null;

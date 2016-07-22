@@ -14,6 +14,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import cl.buildersoft.framework.exception.BSSystemException;
 
+@Deprecated
 public class BSFileUtil {
 
 	public Map<String, String> uploadFile(HttpServletRequest request) {

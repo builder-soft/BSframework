@@ -50,21 +50,33 @@ public class UserExistsFilter implements Filter {
 		HttpSession session = request.getSession(false);
 
 		if (session == null) {
+			LOG.trace("Session is null, go home");
 			goHome = Boolean.TRUE;
 		} else {
+			LOG.trace("Session exists");
 			Object user = session.getAttribute("User");
 			Object rol = session.getAttribute("Rol");
 			Object domain = session.getAttribute("Domain");
+			LOG.trace(String.format("Verifing objects in session: user:%s, rol:%s, domain:%s", isNull(user), isNull(rol),
+					isNull(domain)));
+
 			if (user == null || rol == null || domain == null) {
 				goHome = Boolean.TRUE;
 			}
 		}
 
 		if (goHome) {
+			LOG.trace(String.format("Redirect to %s", request.getContextPath()));
 			response.sendRedirect(request.getContextPath());
 		} else {
+			LOG.trace("Continue Chain");
 			chain.doFilter(servletRequest, servletResponse);
 		}
+		LOG.exit();
+	}
+
+	private String isNull(Object obj) {
+		return obj == null ? "null" : "Object";
 	}
 
 	public void init(FilterConfig fConfig) throws ServletException {

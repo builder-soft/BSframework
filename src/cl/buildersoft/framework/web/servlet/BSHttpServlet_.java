@@ -212,7 +212,7 @@ public class BSHttpServlet_ extends HttpServlet {
 					</code>
 			 */
 			if (session.getAttribute(SESSION_NAME_COOKIE) == null) {
-				// LOG.log(Level.INFO, "IF is true");
+				LOG.trace(String.format("Session attribute '%s' is null, creating with value '%s'", SESSION_NAME_COOKIE, token));
 				session.setAttribute(SESSION_NAME_COOKIE, token);
 			}
 
@@ -222,7 +222,7 @@ public class BSHttpServlet_ extends HttpServlet {
 			LOG.debug(String.format("CurrentContext:'%s' LastConext:'%s' for '%s'", currentContext, lastContext,
 					request.getRequestURL()));
 			if (lastContext != null) {
-				if (!lastContext.equals(currentContext)) {
+//				if (!lastContext.equals(currentContext)) {
 					BSConnectionFactory cf = new BSConnectionFactory();
 					Connection conn = cf.getConnection();
 					try {
@@ -235,9 +235,10 @@ public class BSHttpServlet_ extends HttpServlet {
 					} finally {
 						cf.closeConnection(conn);
 					}
-				}
+//				}
 			}
 		}
+		LOG.exit();
 	}
 
 	public void updateSession(HttpServletRequest request, HttpServletResponse response) {
@@ -381,6 +382,7 @@ public class BSHttpServlet_ extends HttpServlet {
 				}
 			}
 		}
+		LOG.exit(out);
 		return out;
 	}
 

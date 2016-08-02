@@ -2,8 +2,8 @@ package cl.buildersoft.framework.web.filter;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,7 +18,7 @@ import cl.buildersoft.framework.util.BSUtils;
 
 // @ WebFilter(urlPatterns = { "/servlet/*", "/jsp/*" })
 public class NoCacheFilter implements Filter {
-	private static final Logger LOG = Logger.getLogger(NoCacheFilter.class.getName());
+	private static final Logger LOG = LogManager.getLogger(NoCacheFilter.class);
 
 	public NoCacheFilter() {
 	}
@@ -31,10 +31,10 @@ public class NoCacheFilter implements Filter {
 			ServletException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		
-		LOG.log(Level.FINE, "No Cache Filter, Context: {0}, {1}",
-				BSUtils.array2ObjectArray(request.getServletContext().getAttribute("CurrentContext").toString(), request.getRequestURI()));
-		
+
+		LOG.trace(String.format("No Cache Filter, Context: %s, %s", request.getServletContext().getAttribute("CurrentContext")
+				.toString(), request.getRequestURI()));
+
 		response.setDateHeader("Date", new Date().getTime());
 		response.setDateHeader("Expires", 0);
 		response.setHeader("Cache-Control", "no-cache, must-revalidate, s-maxage=0, proxy-revalidate, private");

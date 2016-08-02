@@ -45,6 +45,6 @@ public class RestoreSessionFilter implements Filter {
 			throw new ServletException(e);
 		}
 		chain.doFilter(rq, rs);
-		
+		LOG.exit();
 	}
 }

@@ -777,4 +777,130 @@ public class BSTableConfig implements Serializable {
 	public Object[] getInsertExtParam() {
 		return this.insertExtParam;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((context == null) ? 0 : context.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((database == null) ? 0 : database.hashCode());
+		result = prime * result + ((deleteSP == null) ? 0 : deleteSP.hashCode());
+		result = prime * result + Arrays.hashCode(fields);
+		result = prime * result + ((fieldsMap == null) ? 0 : fieldsMap.hashCode());
+		result = prime * result + ((fkInfo == null) ? 0 : fkInfo.hashCode());
+		result = prime * result + Arrays.hashCode(insertExtParam);
+		result = prime * result + ((insertSP == null) ? 0 : insertSP.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+		result = prime * result + ((script == null) ? 0 : script.hashCode());
+		result = prime * result + ((sortField == null) ? 0 : sortField.hashCode());
+		result = prime * result + ((tableName == null) ? 0 : tableName.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+		result = prime * result + ((viewName == null) ? 0 : viewName.hashCode());
+		result = prime * result + ((where == null) ? 0 : where.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof BSTableConfig))
+			return false;
+		BSTableConfig other = (BSTableConfig) obj;
+		if (context == null) {
+			if (other.context != null)
+				return false;
+		} else if (!context.equals(other.context))
+			return false;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!data.equals(other.data))
+			return false;
+		if (database == null) {
+			if (other.database != null)
+				return false;
+		} else if (!database.equals(other.database))
+			return false;
+		if (deleteSP == null) {
+			if (other.deleteSP != null)
+				return false;
+		} else if (!deleteSP.equals(other.deleteSP))
+			return false;
+		if (!Arrays.equals(fields, other.fields))
+			return false;
+		if (fieldsMap == null) {
+			if (other.fieldsMap != null)
+				return false;
+		} else if (!fieldsMap.equals(other.fieldsMap))
+			return false;
+		if (fkInfo == null) {
+			if (other.fkInfo != null)
+				return false;
+		} else if (!fkInfo.equals(other.fkInfo))
+			return false;
+		if (!Arrays.equals(insertExtParam, other.insertExtParam))
+			return false;
+		if (insertSP == null) {
+			if (other.insertSP != null)
+				return false;
+		} else if (!insertSP.equals(other.insertSP))
+			return false;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
+			return false;
+		if (pk == null) {
+			if (other.pk != null)
+				return false;
+		} else if (!pk.equals(other.pk))
+			return false;
+		if (script == null) {
+			if (other.script != null)
+				return false;
+		} else if (!script.equals(other.script))
+			return false;
+		if (sortField == null) {
+			if (other.sortField != null)
+				return false;
+		} else if (!sortField.equals(other.sortField))
+			return false;
+		if (tableName == null) {
+			if (other.tableName != null)
+				return false;
+		} else if (!tableName.equals(other.tableName))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (uri == null) {
+			if (other.uri != null)
+				return false;
+		} else if (!uri.equals(other.uri))
+			return false;
+		if (viewName == null) {
+			if (other.viewName != null)
+				return false;
+		} else if (!viewName.equals(other.viewName))
+			return false;
+		if (where == null) {
+			if (other.where != null)
+				return false;
+		} else if (!where.equals(other.where))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "BSTableConfig [" + database + "." + tableName + "]";
+	}
 }

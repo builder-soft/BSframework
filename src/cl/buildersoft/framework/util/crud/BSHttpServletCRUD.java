@@ -17,18 +17,21 @@ import cl.buildersoft.framework.type.Semaphore;
 import cl.buildersoft.framework.web.servlet.BSHttpServlet_;
 
 public abstract class BSHttpServletCRUD extends BSHttpServlet_ implements Serializable {
-//	private static final Logger LOG = Logger.getLogger(BSHttpServletCRUD.class.getName());
+	// private static final Logger LOG =
+	// Logger.getLogger(BSHttpServletCRUD.class.getName());
 	private static final long serialVersionUID = BSHttpServletCRUD.class.getName().hashCode();
 
 	protected abstract BSTableConfig getBSTableConfig(HttpServletRequest request);
 
 	public abstract Semaphore setSemaphore(Connection conn, Object[] values);
 
-//	public abstract void preExecuteAction(BSTableConfig table, String action, Long userId);
+	// public abstract void preExecuteAction(BSTableConfig table, String action,
+	// Long userId);
 
 	protected abstract void configEventLog(BSTableConfig table, Long userId);
 
-//	public abstract void postExecuteAction(BSTableConfig table, String action, Long userId);
+	// public abstract void postExecuteAction(BSTableConfig table, String
+	// action, Long userId);
 
 	// public abstract String getBusinessClass();
 	// public abstract void writeEventLog(Connection conn, String action,
@@ -36,6 +39,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ implements Serial
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BSTableConfig table = getBSTableConfig(request);
+		Boolean forceRewrite = false;
 		configEventLog(table, getCurrentUser(request).getId());
 
 		String uri = null; // request.getServletContext().getAttribute("DALEA_CONTEXT").toString();
@@ -61,10 +65,19 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ implements Serial
 
 		HttpSession session = request.getSession(false);
 		synchronized (session) {
+			BSTableConfig tableTemp = (BSTableConfig) session.getAttribute("BSTable");
+			if (tableTemp != null) {
+				forceRewrite = !tableTemp.equals(table);
+			} else {
+				forceRewrite = !lastContext.equals(currentContext);
+			}
 			session.setAttribute("BSTable", table);
 		}
 
-		forward(request, response, "/servlet/common/LoadTable", !lastContext.equals(currentContext));
+		// forwardOrRedirect(request, response, "/servlet/common/LoadTable");
+		forward(request, response, "/servlet/common/LoadTable", forceRewrite);
+		// forward(request, response, "/servlet/common/LoadTable",
+		// !lastContext.equals(currentContext));
 
 	}
 
@@ -103,7 +116,7 @@ public abstract class BSHttpServletCRUD extends BSHttpServlet_ implements Serial
 		mysql.closeConnection(conn);
 
 		if (servlet != null) {
-//			session.setAttribute("ServletManager", servlet);
+			// session.setAttribute("ServletManager", servlet);
 		}
 		return table;
 	}

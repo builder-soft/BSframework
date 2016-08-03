@@ -222,26 +222,27 @@ public class BSHttpServlet_ extends HttpServlet {
 			LOG.debug(String.format("CurrentContext:'%s' LastConext:'%s' for '%s'", currentContext, lastContext,
 					request.getRequestURL()));
 			if (lastContext != null) {
-//				if (!lastContext.equals(currentContext)) {
-					BSConnectionFactory cf = new BSConnectionFactory();
-					Connection conn = cf.getConnection();
-					try {
-						Long start = System.currentTimeMillis();
-						readSessionDataFromDB(conn, session, token);
-						Long end = System.currentTimeMillis();
-						LOG.trace(String.format("Readed session from DB in \"%d\" miliseconds", (end - start)));
-					} catch (Exception e) {
-						LOG.error(e);
-					} finally {
-						cf.closeConnection(conn);
-					}
-//				}
+				// if (!lastContext.equals(currentContext)) {
+				BSConnectionFactory cf = new BSConnectionFactory();
+				Connection conn = cf.getConnection();
+				try {
+					Long start = System.currentTimeMillis();
+					readSessionDataFromDB(conn, session, token);
+					Long end = System.currentTimeMillis();
+					LOG.trace(String.format("Readed session from DB in \"%d\" miliseconds", (end - start)));
+				} catch (Exception e) {
+					LOG.error(e);
+				} finally {
+					cf.closeConnection(conn);
+				}
+				// }
 			}
 		}
 		LOG.exit();
 	}
 
 	public void updateSession(HttpServletRequest request, HttpServletResponse response) {
+		long start = System.currentTimeMillis();
 		String token = readTokenValue(request);
 		if (token != null) {
 			HttpSession session = request.getSession(false);
@@ -269,6 +270,7 @@ public class BSHttpServlet_ extends HttpServlet {
 			}
 			// saveCookieToResponse(response, token);
 		}
+		LOG.trace(String.format("Update Session in '%d' miliseconds.", System.currentTimeMillis() - start));
 	}
 
 	public void deleteSession(HttpServletRequest request, HttpServletResponse response) {
@@ -362,7 +364,8 @@ public class BSHttpServlet_ extends HttpServlet {
 		if (cookies != null) {
 			LOG.trace("There are cookies");
 			for (Cookie currentCookie : cookies) {
-				LOG.trace(String.format("Comparing cookies %s==%s?", cookieName, currentCookie.getName()));
+				LOG.trace(String.format("Comparing cookies %s==%s(%s)?", cookieName, currentCookie.getName(),
+						currentCookie.getValue()));
 				if (currentCookie.getName().equals(cookieName)) {
 					out = currentCookie.getValue();
 					LOG.trace(String.format("Found, exiting width '%s'", out));

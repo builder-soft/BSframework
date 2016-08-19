@@ -1,26 +1,30 @@
 package cl.buildersoft.framework.util.crud;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import cl.buildersoft.framework.beans.LogInfoBean;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.dataType.BSDataTypeFactory;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.exception.BSDataBaseException;
 import cl.buildersoft.framework.exception.BSProgrammerException;
-import cl.buildersoft.framework.util.BSUtils;
 
-public class BSTableConfig {
-	private final static Logger LOG = Logger.getLogger(BSTableConfig.class.getName());
+public class BSTableConfig implements Serializable {
+	private final static Logger LOG = LogManager.getLogger(BSTableConfig.class);
+	private static final long serialVersionUID = 5244852621619707464L;
 	private String database = null;
 	private String tableName = null;
 	private String[] fields = null;
@@ -36,9 +40,15 @@ public class BSTableConfig {
 	private String script = "";
 
 	private String viewName = null;
-	private String saveSP = null;
+	private String insertSP = null;
 	private String deleteSP = null;
+	private Object[] insertExtParam = null;
 	private String where = null;
+
+	private LogInfoBean logInfo[] = null;
+
+	private List<Object[]> data = null;
+	private String context = null;
 
 	public BSTableConfig(String database) {
 		this.database = database;
@@ -95,6 +105,7 @@ public class BSTableConfig {
 		BSAction insert = new BSAction("INSERT", BSActionType.Table);
 		insert.setLabel("Nuevo");
 		insert.setUrl("/servlet/common/NewRecord");
+		insert.setContext("DALEA_CONTEXT");
 		this.addAction(insert);
 	}
 
@@ -102,6 +113,7 @@ public class BSTableConfig {
 		BSAction edit = new BSAction("EDIT", BSActionType.Record);
 		edit.setLabel("Modificar");
 		edit.setUrl("/servlet/common/SearchRecord");
+		edit.setContext("DALEA_CONTEXT");
 		this.addAction(edit);
 	}
 
@@ -109,6 +121,7 @@ public class BSTableConfig {
 		BSAction delete = new BSAction("DELETE", BSActionType.MultiRecord);
 		delete.setLabel("Borrar");
 		delete.setUrl("/servlet/common/crud/DeleteRecords");
+		delete.setContext("DALEA_CONTEXT");
 		this.addAction(delete);
 	}
 
@@ -399,11 +412,9 @@ public class BSTableConfig {
 	}
 
 	private void setRealType(ResultSetMetaData metaData, Integer i, BSField field) {
-
 		String typeName;
 		try {
-			LOG.log(Level.FINE, "{0} - {1}",
-					BSUtils.array2ObjectArray(metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
+//			LOG.trace(String.format("Reading column type %s - %s", metaData.getColumnClassName(i), metaData.getColumnTypeName(i)));
 			typeName = metaData.getColumnTypeName(i);
 
 		} catch (SQLException e) {
@@ -603,7 +614,7 @@ public class BSTableConfig {
 	public BSField getField(String name) {
 		BSField out = this.fieldsMap.get(name);
 		if (out == null) {
-			LOG.log(Level.SEVERE, "Field {0} not found, the fields list is {1}", BSUtils.array2ObjectArray(name, this.fieldsMap));
+			LOG.debug(String.format("Field %s not found, the fields list is %s", name, this.fieldsMap.toString()));
 			throw new BSProgrammerException("Field '" + name + "' not found");
 		}
 		return out;
@@ -648,8 +659,8 @@ public class BSTableConfig {
 	public Map<String, BSField> deleteIdMap() {
 		BSField[] out = this.deleteId();
 		Map<String, BSField> mapField = new HashMap<String, BSField>();
-		for (BSField s : out) {
-			mapField.put(s.getName(), s);
+		for (BSField f : out) {
+			mapField.put(f.getName(), f);
 		}
 		return mapField;
 	}
@@ -658,12 +669,12 @@ public class BSTableConfig {
 		return viewName != null;
 	}
 
-	public String getSaveSP() {
-		return saveSP;
+	public String getInsertSP() {
+		return insertSP;
 	}
 
-	public void setSaveSP(String saveSP) {
-		this.saveSP = saveSP;
+	public void setInsertSP(String insertSP) {
+		this.insertSP = insertSP;
 	}
 
 	public String getDeleteSP() {
@@ -712,5 +723,184 @@ public class BSTableConfig {
 		this.where = where;
 	}
 
-	 
+	public void addLogInfo(LogInfoBean logInfo) {
+		// System.arraycopy(out, 0, aux, 0, out.length);
+		if (this.logInfo == null) {
+			this.logInfo = new LogInfoBean[0];
+		}
+
+		this.logInfo = Arrays.copyOf(this.logInfo, this.logInfo.length + 1);
+		// System.arraycopy(this.logInfo, 0, this.logInfo, 0,
+		// this.logInfo.length);
+		this.logInfo[this.logInfo.length - 1] = logInfo;
+		// this.logInfo
+	}
+
+	public LogInfoBean getLogInfo(String action) {
+		LogInfoBean out = null;
+		if (this.logInfo != null) {
+			for (LogInfoBean logInfo : this.logInfo) {
+				if (logInfo.getAction().equalsIgnoreCase(action)) {
+					out = logInfo;
+					break;
+				}
+			}
+		}
+		return out;
+	}
+
+	public List<Object[]> getData() {
+		return data;
+	}
+
+	public void setData(List<Object[]> data) {
+		this.data = data;
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
+	}
+
+	public void addInsertExtParam(Object o) {
+		if (this.insertExtParam == null) {
+			this.insertExtParam = new Object[0];
+		}
+
+		this.insertExtParam = Arrays.copyOf(this.insertExtParam, this.insertExtParam.length + 1);
+		this.insertExtParam[this.insertExtParam.length - 1] = o;
+	}
+
+	public Object[] getInsertExtParam() {
+		return this.insertExtParam;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((context == null) ? 0 : context.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((database == null) ? 0 : database.hashCode());
+		result = prime * result + ((deleteSP == null) ? 0 : deleteSP.hashCode());
+		result = prime * result + Arrays.hashCode(fields);
+		result = prime * result + ((fieldsMap == null) ? 0 : fieldsMap.hashCode());
+		result = prime * result + ((fkInfo == null) ? 0 : fkInfo.hashCode());
+		result = prime * result + Arrays.hashCode(insertExtParam);
+		result = prime * result + ((insertSP == null) ? 0 : insertSP.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+		result = prime * result + ((script == null) ? 0 : script.hashCode());
+		result = prime * result + ((sortField == null) ? 0 : sortField.hashCode());
+		result = prime * result + ((tableName == null) ? 0 : tableName.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+		result = prime * result + ((viewName == null) ? 0 : viewName.hashCode());
+		result = prime * result + ((where == null) ? 0 : where.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof BSTableConfig))
+			return false;
+		BSTableConfig other = (BSTableConfig) obj;
+		if (context == null) {
+			if (other.context != null)
+				return false;
+		} else if (!context.equals(other.context))
+			return false;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!data.equals(other.data))
+			return false;
+		if (database == null) {
+			if (other.database != null)
+				return false;
+		} else if (!database.equals(other.database))
+			return false;
+		if (deleteSP == null) {
+			if (other.deleteSP != null)
+				return false;
+		} else if (!deleteSP.equals(other.deleteSP))
+			return false;
+		if (!Arrays.equals(fields, other.fields))
+			return false;
+		if (fieldsMap == null) {
+			if (other.fieldsMap != null)
+				return false;
+		} else if (!fieldsMap.equals(other.fieldsMap))
+			return false;
+		if (fkInfo == null) {
+			if (other.fkInfo != null)
+				return false;
+		} else if (!fkInfo.equals(other.fkInfo))
+			return false;
+		if (!Arrays.equals(insertExtParam, other.insertExtParam))
+			return false;
+		if (insertSP == null) {
+			if (other.insertSP != null)
+				return false;
+		} else if (!insertSP.equals(other.insertSP))
+			return false;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
+			return false;
+		if (pk == null) {
+			if (other.pk != null)
+				return false;
+		} else if (!pk.equals(other.pk))
+			return false;
+		if (script == null) {
+			if (other.script != null)
+				return false;
+		} else if (!script.equals(other.script))
+			return false;
+		if (sortField == null) {
+			if (other.sortField != null)
+				return false;
+		} else if (!sortField.equals(other.sortField))
+			return false;
+		if (tableName == null) {
+			if (other.tableName != null)
+				return false;
+		} else if (!tableName.equals(other.tableName))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (uri == null) {
+			if (other.uri != null)
+				return false;
+		} else if (!uri.equals(other.uri))
+			return false;
+		if (viewName == null) {
+			if (other.viewName != null)
+				return false;
+		} else if (!viewName.equals(other.viewName))
+			return false;
+		if (where == null) {
+			if (other.where != null)
+				return false;
+		} else if (!where.equals(other.where))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "BSTableConfig [" + database + "." + tableName + "]";
+	}
 }

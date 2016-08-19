@@ -1,5 +1,6 @@
 package cl.buildersoft.framework.util.crud;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,8 @@ import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.database.BSmySQL;
 import cl.buildersoft.framework.util.BSConfig;
 
-public class BSPaging {
+public class BSPaging implements Serializable {
+	private static final long serialVersionUID = -1699129098022110262L;
 	private Boolean requiresPaging = null;
 	private Integer recordPerPage = null;
 	private Integer recordCount = null;

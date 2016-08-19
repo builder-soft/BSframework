@@ -1,12 +1,14 @@
 package cl.buildersoft.framework.dataType.impl;
 
+import java.io.Serializable;
 import java.sql.Connection;
 
 import cl.buildersoft.framework.dataType.BSDataType;
 import cl.buildersoft.framework.dataType.BSDataTypeAbstract;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 
-public class BSInteger extends BSDataTypeAbstract implements BSDataType {
+public class BSInteger extends BSDataTypeAbstract implements BSDataType, Serializable {
+	private static final long serialVersionUID = 175883259497230584L;
 	private static final String PATTERN_INTEGER = "PATTERN_INTEGER";
 
 	@Override

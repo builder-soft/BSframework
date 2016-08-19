@@ -9,13 +9,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import cl.buildersoft.framework.exception.BSDataBaseException;
 
 public class BSDataUtils {
-	private static final Logger LOG = Logger.getLogger(BSDataUtils.class.getName());
+	private static final Logger LOG = LogManager.getLogger(BSDataUtils.class);
 
 	PreparedStatement preparedStatement = null;
 
@@ -56,7 +56,7 @@ public class BSDataUtils {
 			parametersToStatement(parameter, preparedStatement);
 			rowsAffected = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "SQL was: {0} and parameters were {1}", BSUtils.array2ObjectArray(sql, parameter));
+			LOG.error(String.format("SQL was: %s and parameters were %s", sql, parameter.toString()));
 			throw new BSDataBaseException(e);
 		} finally {
 			if (preparedStatement != null) {
@@ -136,7 +136,8 @@ public class BSDataUtils {
 			preparedStatement = conn.prepareStatement(sql);
 			parametersToStatement(parameters, preparedStatement);
 			out = preparedStatement.executeQuery();
-		} catch (SQLException e) {
+		} catch (Exception e) {
+			LOG.error(String.format("SQL was: %s and parameters were %s", sql, parameters.toString()));
 			throw new BSDataBaseException(e);
 		}
 
@@ -176,8 +177,8 @@ public class BSDataUtils {
 					} else if (param == null) {
 						preparedStatement.setNull(initIndex + 1, java.sql.Types.NULL);
 					} else {
-						LOG.logp(Level.WARNING, BSDataUtils.class.getName(), "parametersToStatement",
-								"Object type not cataloged for type {0}. Will be like a Object class", param.getClass().getName());
+						LOG.warn(String.format("Object type not cataloged for type %s. Will be like a Object class", param
+								.getClass().getName()));
 						preparedStatement.setObject(initIndex + 1, param);
 					}
 

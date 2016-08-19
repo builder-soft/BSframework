@@ -1,5 +1,6 @@
 package cl.buildersoft.framework.dataType.impl;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -14,7 +15,8 @@ import cl.buildersoft.framework.util.BSConfig;
 
 //import java.util.Date;
 
-public class BSCalendar extends BSDataTypeAbstract implements BSDataType {
+public class BSCalendar extends BSDataTypeAbstract implements BSDataType, Serializable {
+	private static final long serialVersionUID = -7721753756189866016L;
 	private Calendar value = null;
 
 	public BSCalendar() {

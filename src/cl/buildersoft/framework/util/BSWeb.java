@@ -16,6 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,6 +36,7 @@ import cl.buildersoft.framework.services.impl.BSMenuServiceImpl;
 import cl.buildersoft.framework.util.crud.BSField;
 
 public class BSWeb {
+	private static final Logger LOG = Logger.getLogger(BSWeb.class.getName());
 	private static final String LOCALE = "LOCALE";
 	private static final String PATTERN_DECIMAL = "PATTERN_DECIMAL";
 	private static final String PATTERN_INTEGER = "PATTERN_INTEGER";
@@ -291,28 +294,36 @@ public class BSWeb {
 	 */
 
 	/********************/
-	public static Boolean canUse(String optionKey, HttpServletRequest request, Connection conn) {
+	public static Boolean canUse(String optionKey, HttpServletRequest request) {
 		Boolean out = Boolean.TRUE;
 
 		BSmySQL mysql = new BSmySQL();
-		// Connection conn = mysql.getConnection(request);
+		BSConnectionFactory cf = new BSConnectionFactory();
+		Connection conn = null;
 
-		BSMenuService menuService = new BSMenuServiceImpl();
-		Option option = menuService.searchResourceByKey(conn, optionKey);
-		if (option != null) {
-			List<Rol> rols = null;
+		try {
+			conn = cf.getConnection(request);
+			BSMenuService menuService = new BSMenuServiceImpl();
+			Option option = menuService.searchResourceByKey(conn, optionKey);
+			if (option != null) {
+				List<Rol> rols = null;
 
-			HttpSession session = request.getSession(false);
-			synchronized (session) {
-				rols = (List<Rol>) session.getAttribute("Rol");
-			}
+				HttpSession session = request.getSession(false);
+				synchronized (session) {
+					rols = (List<Rol>) session.getAttribute("Rol");
+				}
 
-			for (Rol rol : rols) {
-				out = validResourceByRol(conn, mysql, option.getId(), rol.getId());
-				if (out) {
-					break;
+				for (Rol rol : rols) {
+					out = validResourceByRol(conn, mysql, option.getId(), rol.getId());
+					if (out) {
+						break;
+					}
 				}
 			}
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			cf.closeConnection(conn);
 		}
 
 		// new BSmySQL().closeConnection(conn);
@@ -339,13 +350,13 @@ public class BSWeb {
 		Boolean haveInfo = Boolean.FALSE;
 		try {
 			ResultSetMetaData metaData = rs.getMetaData();
-			out.append("<table class='cList' cellpadding='0' cellspacing='0'>");
-			out.append("<tr>");
+			out.append("<table class='table table-striped table-bordered table-hover table-condensed table-responsive'>");
+			out.append("<thead><tr>");
 			Integer index = 1, indexRow = 1;
 			for (index = 1; index <= metaData.getColumnCount(); index++) {
-				out.append("<td class='cHeadTD' nowrap align='center'>" + metaData.getColumnLabel(index) + "</td>");
+				out.append("<th>" + metaData.getColumnLabel(index) + "</th>");
 			}
-			out.append("</tr>\n");
+			out.append("</tr></thead><tbody>\n");
 
 			while (rs.next()) {
 				out.append("<tr>");
@@ -358,21 +369,23 @@ public class BSWeb {
 					String data = null;
 					data = rs.getString(index);
 					value = formatData(conn, data, type);
-					out.append("<td class='" + style + "' nowrap align='" + value[1] + "'>" + value[0] + "</td>");
+					out.append("<td>" + value[0] + "</td>");
+//					out.append("<td class='" + style + "' nowrap align='" + value[1] + "'>" + value[0] + "</td>");
 				}
 
 				haveInfo = Boolean.TRUE;
-				out.append("</tr>\n");
+				out.append("</tr></tbody>\n");
 
 			}
 			if (!haveInfo) {
-				out.append("<tr><td class='cDataTD' colspan='" + metaData.getColumnCount() + "'>No hay información</td></tr>");
+				out.append("<tr><td>No hay información</td></tr>");
+//				out.append("<tr><td class='cDataTD' colspan='" + metaData.getColumnCount() + "'>No hay información</td></tr>");
 			}
 		} catch (SQLException e) {
 			throw new BSDataBaseException(e);
 		}
 
-		out.append("</tr>");
+		out.append("</table>");
 		return out.toString();
 	}
 

@@ -2,12 +2,13 @@ package cl.buildersoft.framework.beans;
 
 import java.io.Serializable;
 
-public class Option extends BSBean implements Serializable{
+public class Option extends BSBean implements Serializable {
 	private static final long serialVersionUID = -1126831609688823765L;
 	@SuppressWarnings("unused")
 	private String TABLE = "tOption";
 	private String key = null;
 	private String label = null;
+	private String context = null;
 	private String url = null;
 	private Long parent = null;
 
@@ -43,9 +44,17 @@ public class Option extends BSBean implements Serializable{
 		this.parent = parent;
 	}
 
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
+	}
+
 	@Override
 	public String toString() {
-		return "\n\tOption [id=" + super.getId() + ", key=" + key + ", label=" + label + ", url=" + url + ", parent=" + parent
-				+ "]";
+		return "Option [Id=" + getId() + ", key=" + key + ", label=" + label + ", context=" + context + ", url=" + url
+				+ ", parent=" + parent + "]";
 	}
 }

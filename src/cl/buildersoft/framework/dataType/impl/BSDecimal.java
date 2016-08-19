@@ -1,5 +1,6 @@
 package cl.buildersoft.framework.dataType.impl;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
 
@@ -8,7 +9,8 @@ import cl.buildersoft.framework.dataType.BSDataTypeAbstract;
 import cl.buildersoft.framework.dataType.BSDataTypeEnum;
 import cl.buildersoft.framework.exception.BSProgrammerException;
 
-public class BSDecimal extends BSDataTypeAbstract implements BSDataType {
+public class BSDecimal extends BSDataTypeAbstract implements BSDataType, Serializable {
+	private static final long serialVersionUID = 20416678585513481L;
 	private BigDecimal value = new BigDecimal(0);
 
 	@Override

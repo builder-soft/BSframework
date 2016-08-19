@@ -1,11 +1,13 @@
 package cl.buildersoft.framework.util.crud;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 import cl.buildersoft.framework.dataType.BSDataType;
 
-public class BSField {
+public class BSField implements Serializable {
+	private static final long serialVersionUID = 5285998259935543807L;
 	private String name = null;
 	private String label = null;
 	private Boolean pk = null;
@@ -20,8 +22,8 @@ public class BSField {
 	private String typeHtml = "text";
 	private Boolean isNullable = false; // rs.getMetaData().isNullable(index);
 	private Boolean readonly = Boolean.FALSE;
-//	private Boolean visible = Boolean.TRUE;
-	
+	// private Boolean visible = Boolean.TRUE;
+
 	private Boolean showInTable = Boolean.TRUE;
 	private Boolean showInForm = Boolean.TRUE;
 
@@ -144,7 +146,9 @@ public class BSField {
 	public void setValidationOnBlur(String validationOnBlur) {
 		this.validationOnBlur = validationOnBlur;
 	}
-/**<code>
+
+	/**
+	 * <code>
 	public Boolean isVisible() {
 		return visible;
 	}
@@ -152,7 +156,8 @@ public class BSField {
 	public void setVisible(Boolean visible) {
 		this.visible = visible;
 	}
-</code> */
+</code>
+	 */
 	/***/
 	public String getFKDatabase() {
 		return fk != null ? fk[0] : null;
@@ -181,7 +186,6 @@ public class BSField {
 		this.fkData = fkData;
 	}
 
-	 
 	public String getTypeHtml() {
 		return typeHtml;
 	}

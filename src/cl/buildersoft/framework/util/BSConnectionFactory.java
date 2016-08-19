@@ -4,8 +4,8 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -26,36 +26,14 @@ import cl.buildersoft.framework.exception.BSDataBaseException;
 public class BSConnectionFactory {
 	/**
 	 * <code>
-Métodos a implementar:
----------------------
-- getConn(String DomainName) : Llama a getParameters() y luego a JDBC()
-- getConn(HttpServletRequest request) : Buscar el DnsName del dominio actual y abre la coneccion. Si falla llama a getConn(String DomainName)
-- getConn() : Abre una coneccion de la base bsframework
+Hay que implementar un método en el cual se indique el módulo y el dominio de conección 
+para saber a cual base de datos se debe conectar el datasource.
 
-OK - JDBC(driver, url, user, password): crea una coneccion jdbc directa a la base de datos.
-OK - get2(String dataSourceName): Abre una coneccion usando directamente el datasource, si hay error, usa el método getConn(domainName)
-OK - getParameters(dnsName): Abre el archivo context.xml y busca/retorna los parametros de coneccion.
-
-Otras actividades:
------------------
-- Hay que borrar los datos de coneccion de la tabla tDomainAttribute.
-- Configurar todos los datos de todas las conecciones en el archivo META-INF/context.xml
-- Borrar los datos de coneccion del archivo web.xml.
-- Las siguientes clases deben llamar a la clase BSConnectionFactory, esto debe ser revisado caso a caso:
-OK  - cl.buildersoft.framework.util.BSDataUtils
-OK  - cl.buildersoft.framework.util.BSHttpServlet
-
-OK  - cl.buildersoft.timectrl.business.console.AbstractConsoleService
-OK  - cl.buildersoft.timectrl.business.console.BuildReport (para borrar la clase)
-OK  - cl.buildersoft.timectrl.business.process.AbstractProcess
-  
-OK  - cl.buildersoft.web.filter.LicenseValidation
-OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
-  - cl.buildersoft.web.servlet.timectrl.employeeLicense.ReadExcelWithLicensing
+- getConnection(HttpServletRequest, String module)
 
 </code>
 	 */
-	private static final Logger LOG = Logger.getLogger(BSConnectionFactory.class.getName());
+	private static final Logger LOG = LogManager.getLogger(BSConnectionFactory.class);
 
 	public void closeConnection(Connection conn) {
 		if (conn != null) {
@@ -64,7 +42,7 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 					conn.close();
 				}
 			} catch (SQLException e) {
-				LOG.log(Level.SEVERE, "Can't close connection", e);
+				LOG.error("Can't close connection", e);
 				throw new BSDataBaseException(e);
 			}
 		}
@@ -76,7 +54,7 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 			out = getConnectionByDataSource(dsName);
 		} catch (RuntimeException e) {
 			// if (e.getCause() instanceof NoInitialContextException) {
-			String[] params = getConnectionParameters(dsName);
+			String[] params = getDataConnection(dsName);
 			out = getConnectionJDBC(params[0], params[1], params[2], params[3]);
 			// }
 		}
@@ -102,7 +80,7 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 		try {
 			Class.forName(driverName);
 		} catch (ClassNotFoundException e) {
-			LOG.log(Level.SEVERE, "Error to load driver {0} in class BSConnectionmanager", driverName);
+			LOG.error(String.format("Error to load driver %s", driverName));
 			throw new BSConfigurationException(e);
 		}
 		// String url = "jdbc:mysql://" + serverName + "/" + database;
@@ -110,11 +88,10 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 		try {
 			conn = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, "Error connecting to database using MySQL driver={0} url={1} user={2} pass={3}",
-					BSUtils.array2ObjectArray(driverName, url, username, password));
+			LOG.error(String.format("Error connecting to database using MySQL driver=%s url=%s user=%s pass=%s", driverName, url,
+					username, password));
 			throw new BSDataBaseException(e);
 		}
-
 		return conn;
 	}
 
@@ -126,26 +103,22 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 			DataSource ds = (DataSource) envContext.lookup("jdbc/" + dsName);
 			conn = ds.getConnection();
 		} catch (SQLException e) {
-			LOG.logp(Level.SEVERE, BSDataUtils.class.getName(), "getConnectionByDataSource",
-					"Error connecting width DataSource (SQLException)", e);
+			LOG.error(String.format("Error connecting width DataSource (SQLException) for %s", dsName));
 			throw new BSConfigurationException(e);
 		} catch (NamingException e) {
-			LOG.logp(Level.WARNING, BSDataUtils.class.getName(), "getConnectionByDataSource",
-					"Error connecting width DataSource (NamingException)");
+			LOG.warn(String.format("Error connecting width DataSource (NamingException) for %s", dsName));
 			throw new BSConfigurationException(e);
-			// return getConnection(dsName);
 		}
 
 		return conn;
 	}
 
-	private String[] getConnectionParameters(String dsName) {
+	private String[] getDataConnection(String dsName) {
 		String[] out = new String[4];
 
-		String fileConfigPath = System.getenv("BS_PATH") + File.separatorChar + ".." + File.separatorChar + "META-INF"
-				+ File.separatorChar + "context.xml";
+		String fileConfigPath = getContextPathFile();
 
-		LOG.log(Level.CONFIG, "Configuration file is {0}", fileConfigPath);
+		LOG.info(String.format("Configuration file is %s", fileConfigPath));
 
 		try {
 			// Document contextFile = DocumentHelper.parseText(fileConfigPath);
@@ -163,11 +136,19 @@ OK  - cl.buildersoft.web.servlet.ajax.AbstractAjaxServlet
 			out[3] = resourceNode.attributeValue("password");
 
 		} catch (DocumentException e) {
-			LOG.log(Level.SEVERE, "Cant parse XML file {0}", fileConfigPath);
+			LOG.error(String.format("Cant parse XML file %s", fileConfigPath));
 			throw new BSConfigurationException(e);
 		} catch (Error e) {
-			LOG.log(Level.SEVERE, "Error reading configuration", e);
+			LOG.error("Error reading configuration", e);
 		}
 		return out;
+	}
+
+	private String getContextPathFile() {
+		return System.getenv("CATALINA_HOME") + File.separatorChar + "conf" + File.separatorChar + "context.xml";
+
+		// return System.getenv("BS_PATH") + File.separatorChar + ".." +
+		// File.separatorChar + "META-INF"
+		// + File.separatorChar + "context.xml";
 	}
 }
